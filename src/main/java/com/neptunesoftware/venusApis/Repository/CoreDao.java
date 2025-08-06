@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.*;
@@ -28,6 +29,14 @@ public class CoreDao {
         this.appProps = appProps;
     }
 
+    public void executeCallableService(String task) {
+        try {
+            jdbcTemplate.execute("{call " + task + "}");
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+    }
+
     public String findProcessingDt() {
         return jdbcTemplate.queryForObject("SELECT DISPLAY_VALUE FROM " + appProps.coreSchema + ".ctrl_parameter WHERE PARAM_CD = 'S02'", String.class);
     }
@@ -36,6 +45,7 @@ public class CoreDao {
         try {
             CachedItems item = new CachedItems();
             item.processDt = findProcessingDt();
+            item.callableTasks = appProps.callableTasks.split(",");
             return item;
         } catch (Exception e) {
             logger.info("Failed to load cache items" + e.getLocalizedMessage());
@@ -46,15 +56,15 @@ public class CoreDao {
     public TrxnSmsList findTransactionAlerts(String lastMsgId) {
         TrxnSmsList tranList;
         try {
-            String lastMessageId =  (lastMsgId != null)
+            String lastMessageId = (lastMsgId != null)
                     && (!lastMsgId.trim().isEmpty()) ? lastMsgId
                     : "0";
-           int fetchLimit = appProps.fetchLimit;
+            int fetchLimit = appProps.fetchLimit;
 
             List<SMS> messageList = jdbcTemplate
                     .query("select * from v_outward_messages_dep where recordID > ? and rownum <= ?",
                             new BeanPropertyRowMapper<>(
-                                    SMS.class),lastMessageId,fetchLimit);
+                                    SMS.class), lastMessageId, fetchLimit);
             if (!messageList.isEmpty())
                 tranList = new TrxnSmsList("0", "Success", messageList);
             else
@@ -100,7 +110,7 @@ public class CoreDao {
                         .get().get("sms_count"))) + msgCount;
                 updateCount = jdbcTemplate.update(updateSql, totalSMS, totalSMS, "N", acctNo);
             } else {
-                updateCount = jdbcTemplate.update(insertSql, msgCount, msgCount, "N",acctNo, processDt);
+                updateCount = jdbcTemplate.update(insertSql, msgCount, msgCount, "N", acctNo, processDt);
             }
 
             if (updateCount >= 0) {

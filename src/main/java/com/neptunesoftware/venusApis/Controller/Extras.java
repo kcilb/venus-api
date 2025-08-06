@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/apis/v1/extras")
+@RequestMapping("/apis/v2/extras")
 public class Extras {
 
     @PostMapping(value = "encrypt", consumes = "application/json",produces = "application/json")
