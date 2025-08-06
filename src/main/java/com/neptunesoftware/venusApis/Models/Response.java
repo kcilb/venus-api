@@ -1,16 +1,12 @@
 package com.neptunesoftware.venusApis.Models;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-
-public class Responses {
+public class Response {
     private final String code;
     private final String message;
 
     // Add this constructor
-    public Responses(String code, String message) {
+    public Response(String code, String message) {
         this.code = code;
         this.message = message;
     }

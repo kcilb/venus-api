@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class ApiResponse<T> {
     public T data;
-    public Responses responses;
+    public Response response;
 
     public static <T> ApiResponseBuilder<T> builder() {
         return new ApiResponseBuilder<T>();
@@ -14,22 +14,22 @@ public class ApiResponse<T> {
 
     public static class ApiResponseBuilder<T> {
         private T data;
-        private Responses responses;
+        private Response response;
 
         public ApiResponseBuilder<T> data(T data) {
             this.data = data;
             return this;
         }
 
-        public ApiResponseBuilder<T> response(Responses responses) {
-            this.responses = responses;
+        public ApiResponseBuilder<T> response(Response response) {
+            this.response = response;
             return this;
         }
 
         public ApiResponse<T> build() {
             ApiResponse<T> obj = new ApiResponse<>();
             obj.data = this.data;
-            obj.responses = this.responses;
+            obj.response = this.response;
             return obj;
         }
     }

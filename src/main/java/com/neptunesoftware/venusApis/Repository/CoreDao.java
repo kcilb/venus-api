@@ -61,7 +61,7 @@ public class CoreDao {
                 tranList = new TrxnSmsList("21", "No records available", null);
 
         } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
+            logger.info("Failed to load transaction alerts" + e.getLocalizedMessage());
             tranList = new TrxnSmsList("96",
                     "An error occurred while processing your request.", null);
         } finally {
