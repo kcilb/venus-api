@@ -25,9 +25,11 @@ public class AlertChannelService {
         this.coreDao = coreDao;
     }
 
-    public TrxnSmsList findTransactionAlerts(String lastMsgId) {
+    public TrxnSmsList findTransactionAlerts(String body) {
         try {
-            return new TrxnSmsList().createDummyResponse();
+            ObjectMapper mapper = new ObjectMapper();
+            String lastMsgId = mapper.readValue(body, String.class);
+            return coreDao.findTransactionAlerts(lastMsgId);
         } catch (Exception e) {
             logger.info(e.getMessage());
             return new TrxnSmsList("96",

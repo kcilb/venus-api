@@ -23,8 +23,7 @@ public class AlertsChannel {
 
     @PostMapping(value = "findTransactionAlerts",consumes = "application/json",produces = "application/json")
     public ResponseEntity<?> findTransactionAlerts(@RequestBody String body) {
-        String lastMsgId = "";
-        return ResponseEntity.ok(alertChannelService.findTransactionAlerts(lastMsgId));
+        return ResponseEntity.ok(alertChannelService.findTransactionAlerts(body));
     }
 
     @PostMapping(value = "updateAccountStats", consumes = "application/json",produces = "application/json")

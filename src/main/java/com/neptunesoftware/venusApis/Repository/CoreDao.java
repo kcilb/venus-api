@@ -6,6 +6,7 @@ import com.neptunesoftware.venusApis.Models.SMS;
 import com.neptunesoftware.venusApis.Models.TrxnSmsList;
 import com.neptunesoftware.venusApis.Models.Update;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,35 +43,35 @@ public class CoreDao {
         }
     }
 
+    public TrxnSmsList findTransactionAlerts(String lastMsgId) {
+        TrxnSmsList tranList;
+        try {
+            String lastMessageId =  (lastMsgId != null)
+                    && (!lastMsgId.trim().isEmpty()) ? lastMsgId
+                    : "0";
+           int fetchLimit = appProps.fetchLimit;
 
-//    public TrxnSmsList loadTrxnAlerts(String lastMsgId) {
-//        TrxnSmsList tranList;
-//        try (Connection conn = XapiServices.getConnection()) {
-//            QueryRunner queryRunner = new QueryRunner();
-//            List<SMS> mapList = queryRunner
-//                    .query(conn,
-//                            "select * from v_outward_messages_dep where recordID > ? and rownum <= ?",
-//                            new BeanListHandler<SMS>(
-//                                    SMS.class),
-//                            ((lastMsgId != null)
-//                                    && (lastMsgId.trim().length() > 0) ? lastMsgId
-//                                    : "0"), XapiSettings.fetchlimit);
-//            if (mapList != null && !mapList.isEmpty())
-//                tranList = new TrxnSmsList("0", "Success", mapList);
-//            else
-//                tranList = new TrxnSmsList("21", "No records available", null);
-//        } catch (Exception e) {
-//            XapiLogger.getLogger().error(e);
-//            tranList = new TrxnSmsList("96",
-//                    "An error occcured while processing your request.", null);
-//        } finally {
-//            XapiLogger.getLogger().info(
-//                    "Last retrieved transaction alert id: " + lastMsgId);
-//        }
-//        return tranList;
-//    }
+            List<SMS> messageList = jdbcTemplate
+                    .query("select * from v_outward_messages_dep where recordID > ? and rownum <= ?",
+                            new BeanPropertyRowMapper<>(
+                                    SMS.class),lastMessageId,fetchLimit);
+            if (!messageList.isEmpty())
+                tranList = new TrxnSmsList("0", "Success", messageList);
+            else
+                tranList = new TrxnSmsList("21", "No records available", null);
 
-    public Optional<Map<String, Object>> getAlertCount(String acctNo) {
+        } catch (Exception e) {
+            System.out.println(e.getLocalizedMessage());
+            tranList = new TrxnSmsList("96",
+                    "An error occurred while processing your request.", null);
+        } finally {
+            logger.info(
+                    "Last retrieved transaction alert id: " + lastMsgId);
+        }
+        return tranList;
+    }
+
+    private Optional<Map<String, Object>> getAlertCount(String acctNo) {
         try {
             Map<String, Object> result = jdbcTemplate.queryForMap(
                     "SELECT * FROM v_alert_count WHERE acct_no = ?",

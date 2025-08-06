@@ -27,7 +27,7 @@ public class AppProps {
     public String licenseToken;
 
     @Value("${app.venus.fetchLimit}")
-    public String fetchLimit;
+    public int fetchLimit;
 
     @Value("${app.venus.callableTasks}")
     public String callableTasks;
