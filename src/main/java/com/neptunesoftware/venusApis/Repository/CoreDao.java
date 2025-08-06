@@ -5,6 +5,7 @@ import com.neptunesoftware.venusApis.Models.CachedItems;
 import com.neptunesoftware.venusApis.Models.SMS;
 import com.neptunesoftware.venusApis.Models.TrxnSmsList;
 import com.neptunesoftware.venusApis.Models.Update;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,24 +70,36 @@ public class CoreDao {
 //        return tranList;
 //    }
 
+    public Optional<Map<String, Object>> getAlertCount(String acctNo) {
+        try {
+            Map<String, Object> result = jdbcTemplate.queryForMap(
+                    "SELECT * FROM v_alert_count WHERE acct_no = ?",
+                    acctNo
+            );
+            return Optional.of(result);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
 
     @Transactional
     public Update updateAccountStats(String acctNo, int msgCount, String processDt) {
         try {
             String updateSql = "update sms_count set sms_count = ?, total_count = ?, chrge_status =? where acct_no = ? ";
 
-            String insertSql = "insert into sms_count(sms_count,total_count,chrge_status,acct_no, log_date) " +
+            String insertSql = "insert into sms_count(sms_count,total_count,chrge_status,acct_no,log_date) " +
                     "values(?,?,?,?,?)";
 
 
-            Map<String, Object> map = jdbcTemplate.queryForMap("select * from v_alert_count where acct_no = ?", acctNo);
+            Optional<Map<String, Object>> map = getAlertCount(acctNo);
             int updateCount = 0;
-            if (!map.isEmpty()) {
+            if (map.isPresent()) {
                 int totalSMS = Integer.parseInt(String.valueOf(map
-                        .get("sms_count"))) + msgCount;
+                        .get().get("sms_count"))) + msgCount;
                 updateCount = jdbcTemplate.update(updateSql, totalSMS, totalSMS, "N", acctNo);
             } else {
-                updateCount = jdbcTemplate.update(insertSql, msgCount, msgCount, "N", processDt);
+                updateCount = jdbcTemplate.update(insertSql, msgCount, msgCount, "N",acctNo, processDt);
             }
 
             if (updateCount >= 0) {
@@ -94,6 +107,7 @@ public class CoreDao {
             }
             return new Update("92", "No updates were performed", null);
         } catch (Exception e) {
+            logger.info(e.getLocalizedMessage());
             return new Update("96",
                     "An error occurred while processing your request "
                             + e.getLocalizedMessage(), null);
