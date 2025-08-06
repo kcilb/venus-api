@@ -27,7 +27,7 @@ import java.util.List;
 public class AppSecurity {
 
     private final AppProps appProps;
-    private static final String[] AUTH_WHITELIST = new String[]{"/apis/v1/auth/*", "/apis/v1/extras/*"};
+    private static final String[] AUTH_WHITELIST = new String[]{"/apis/v2/auth/*","/apis/v1/extras/**", "/apis/v2/alerts-channel/**"};
 
     public AppSecurity(AppProps appProps) {
         this.appProps = appProps;
@@ -56,8 +56,8 @@ public class AppSecurity {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .inMemoryAuthentication()
-                .withUser(PropsSecurity.decrypt(appProps.username))
-                .password("{noop}" + PropsSecurity.decrypt(appProps.password))
+                .withUser(appProps.username)
+                .password("{noop}" + appProps.password)
                 .authorities("USER");
     }
 

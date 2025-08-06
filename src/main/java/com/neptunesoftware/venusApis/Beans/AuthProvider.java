@@ -23,7 +23,7 @@ public class AuthProvider implements AuthenticationEntryPoint {
         response.setContentType("application/json");
 
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("code", "4040");
+        responseBody.put("code", "401");
         responseBody.put("message", "Unauthorized access");
         PrintWriter writer = response.getWriter();
         writer.write(objectMapper.writeValueAsString(responseBody));
