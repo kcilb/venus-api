@@ -16,17 +16,16 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private final AppProps appProps;
     private final LicenseManager licenseManager;
     private final ItemCacheService cacheService;
-    private final Logging logger;
 
-    public InterceptorConfig(AppProps appProps, LicenseManager licenseManager, ItemCacheService cacheService, Logging logger) {
+    public InterceptorConfig(AppProps appProps, LicenseManager licenseManager,
+                             ItemCacheService cacheService) {
         this.appProps = appProps;
         this.licenseManager = licenseManager;
         this.cacheService = cacheService;
-        this.logger = logger;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new RequestInterceptor(appProps,licenseManager,cacheService,logger));
+        registry.addInterceptor(new RequestInterceptor(appProps,licenseManager,cacheService));
     }
 }

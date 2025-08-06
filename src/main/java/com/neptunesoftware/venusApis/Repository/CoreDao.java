@@ -5,6 +5,10 @@ import com.neptunesoftware.venusApis.Models.CachedItems;
 import com.neptunesoftware.venusApis.Models.SMS;
 import com.neptunesoftware.venusApis.Models.TrxnSmsList;
 import com.neptunesoftware.venusApis.Models.Update;
+import com.neptunesoftware.venusApis.Util.Logging;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,14 +19,14 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.*;
-import java.util.logging.Logger;
+
 
 @Repository
+@Slf4j
 public class CoreDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final AppProps appProps;
-    Logger logger = Logger.getLogger(CoreDao.class.getName());
 
     public CoreDao(JdbcTemplate jdbcTemplate, AppProps appProps) {
         this.jdbcTemplate = jdbcTemplate;
@@ -33,7 +37,7 @@ public class CoreDao {
         try {
             jdbcTemplate.execute("{call " + task + "}");
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            Logging.error(e.getMessage(), e);
         }
     }
 
@@ -48,7 +52,7 @@ public class CoreDao {
             item.callableTasks = appProps.callableTasks.split(",");
             return item;
         } catch (Exception e) {
-            logger.info("Failed to load cache items" + e.getLocalizedMessage());
+            Logging.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
@@ -71,11 +75,11 @@ public class CoreDao {
                 tranList = new TrxnSmsList("21", "No records available", null);
 
         } catch (Exception e) {
-            logger.info("Failed to load transaction alerts" + e.getLocalizedMessage());
+            Logging.error(e.getMessage(), e);
             tranList = new TrxnSmsList("96",
                     "An error occurred while processing your request.", null);
         } finally {
-            logger.info(
+            Logging.info(
                     "Last retrieved transaction alert id: " + lastMsgId);
         }
         return tranList;
@@ -118,12 +122,12 @@ public class CoreDao {
             }
             return new Update("92", "No updates were performed", null);
         } catch (Exception e) {
-            logger.info(e.getLocalizedMessage());
+            Logging.error(e.getMessage(), e);
             return new Update("96",
                     "An error occurred while processing your request "
                             + e.getLocalizedMessage(), null);
         } finally {
-            logger.info(
+            Logging.info(
                     "updateAccountStats account number: " + acctNo
                             + " last sent out alerts count " + msgCount);
         }

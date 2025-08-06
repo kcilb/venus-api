@@ -6,16 +6,17 @@ import com.neptunesoftware.venusApis.Models.ApiResponse;
 import com.neptunesoftware.venusApis.Models.TrxnSmsList;
 import com.neptunesoftware.venusApis.Models.Update;
 import com.neptunesoftware.venusApis.Repository.CoreDao;
+import com.neptunesoftware.venusApis.Util.Logging;
 import com.neptunesoftware.venusApis.Util.StaticRefs;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.logging.Logger;
 
 @Service
 public class AlertChannelService {
-
-    private Logger logger = Logger.getLogger(AlertChannelService.class.getName());
 
     private final ItemCacheService itemCacheService;
     private final CoreDao coreDao;
@@ -31,7 +32,7 @@ public class AlertChannelService {
             String lastMsgId = mapper.readValue(body, String.class);
             return coreDao.findTransactionAlerts(lastMsgId);
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            Logging.error(e.getMessage(),e);
             return new TrxnSmsList("96",
                     "An error occurred while processing your request.", null);
         }
@@ -47,7 +48,7 @@ public class AlertChannelService {
 
             return coreDao.updateAccountStats(acctNo, msgCount, itemCacheService.getCachedItem().processDt);
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            Logging.error(e.getMessage(),e);
             return new Update("96",
                     "An error occurred while processing your request ", null);
         }

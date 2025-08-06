@@ -1,0 +1,535 @@
+2025-08-06T16:50:18.949+03:00 DEBUG 11520 --- [venusApis] [http-nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/apis/v2/alerts-channel/findTransactionAlerts", parameters={}
+2025-08-06T16:50:18.950+03:00 DEBUG 11520 --- [venusApis] [http-nio-8081-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.neptunesoftware.venusApis.Controller.AlertsChannel#findTransactionAlerts(String)
+2025-08-06T16:50:18.951+03:00 DEBUG 11520 --- [venusApis] [http-nio-8081-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to ["1"]
+2025-08-06T16:50:18.969+03:00  INFO 11520 --- [venusApis] [http-nio-8081-exec-2] c.n.venusApis.Repository.CoreDao         : Failed to load transaction alertsPreparedStatementCallback; bad SQL grammar [select * from v_outward_messages_dep where recordID > ? and rownum <= ?]
+
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [select * from v_outward_messages_dep where recordID > ? and rownum <= ?]
+	at org.springframework.jdbc.support.SQLExceptionSubclassTranslator.doTranslate(SQLExceptionSubclassTranslator.java:103) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:677) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:723) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:754) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:767) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:825) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at com.neptunesoftware.venusApis.Repository.CoreDao.findTransactionAlerts(CoreDao.java:69) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:138) ~[spring-tx-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.9.jar:6.2.9]
+	at com.neptunesoftware.venusApis.Repository.CoreDao$$SpringCGLIB$$0.findTransactionAlerts(<generated>) ~[main/:na]
+	at com.neptunesoftware.venusApis.Services.AlertChannelService.findTransactionAlerts(AlertChannelService.java:33) ~[main/:na]
+	at com.neptunesoftware.venusApis.Controller.AlertsChannel.findTransactionAlerts(AlertsChannel.java:26) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.9.jar:6.2.9]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:991) ~[spring-webmvc-6.2.9.jar:6.2.9]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:896) ~[spring-webmvc-6.2.9.jar:6.2.9]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.2.9.jar:6.2.9]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.2.9.jar:6.2.9]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.2.9.jar:6.2.9]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.9.jar:6.2.9]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.2.9.jar:6.2.9]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.43.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.9.jar:6.2.9]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.43.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.43.jar:10.1.43]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilterInternal(BasicAuthenticationFilter.java:213) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.4.8.jar:6.4.8]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$4(HandlerMappingIntrospector.java:267) ~[spring-webmvc-6.2.9.jar:6.2.9]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:238) ~[spring-security-config-6.4.8.jar:6.4.8]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.9.jar:6.2.9]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1769) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.43.jar:10.1.43]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.sql.SQLSyntaxErrorException: ORA-00942: table or view does not exist
+
+https://docs.oracle.com/error-help/db/ora-00942/
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:709) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:609) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1347) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:1100) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:408) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:499) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:274) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CPreparedStatement.executeForDescribe(T4CPreparedStatement.java:1231) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.prepareDefineBufferAndExecute(OracleStatement.java:1412) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.executeMaybeDescribe(OracleStatement.java:1286) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.executeSQLSelect(OracleStatement.java:1843) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1619) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3955) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeQuery(OraclePreparedStatement.java:4142) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OraclePreparedStatementWrapper.executeQuery(OraclePreparedStatementWrapper.java:1103) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeQuery(ProxyPreparedStatement.java:52) ~[HikariCP-5.1.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeQuery(HikariProxyPreparedStatement.java) ~[HikariCP-5.1.0.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:732) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:658) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	... 114 common frames omitted
+Caused by: oracle.jdbc.OracleDatabaseException: ORA-00942: table or view does not exist
+
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:717) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	... 132 common frames omitted
+
+2025-08-06T16:50:18.970+03:00  INFO 11520 --- [venusApis] [http-nio-8081-exec-2] c.n.venusApis.Repository.CoreDao         : Last retrieved transaction alert id: 1
+2025-08-06T16:50:18.971+03:00 DEBUG 11520 --- [venusApis] [http-nio-8081-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json]
+2025-08-06T16:50:18.971+03:00 DEBUG 11520 --- [venusApis] [http-nio-8081-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.neptunesoftware.venusApis.Models.TrxnSmsList@49832845]
+2025-08-06T16:50:18.972+03:00 DEBUG 11520 --- [venusApis] [http-nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-08-06T16:50:42.336+03:00 DEBUG 11520 --- [venusApis] [http-nio-8081-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/apis/v2/alerts-channel/updateAccountStats", parameters={}
+2025-08-06T16:50:42.336+03:00 DEBUG 11520 --- [venusApis] [http-nio-8081-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.neptunesoftware.venusApis.Controller.AlertsChannel#updateAccountStats(String)
+2025-08-06T16:50:42.337+03:00 DEBUG 11520 --- [venusApis] [http-nio-8081-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to ["{"acctNo":"18020300003","msgCount":2}"]
+2025-08-06T16:50:42.367+03:00  INFO 11520 --- [venusApis] [http-nio-8081-exec-3] c.n.venusApis.Repository.CoreDao         : updateAccountStats account number: 18020300003 last sent out alerts count 2
+2025-08-06T16:50:42.390+03:00 DEBUG 11520 --- [venusApis] [http-nio-8081-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json]
+2025-08-06T16:50:42.391+03:00 DEBUG 11520 --- [venusApis] [http-nio-8081-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.neptunesoftware.venusApis.Models.Update@45112e1d]
+2025-08-06T16:50:42.392+03:00 DEBUG 11520 --- [venusApis] [http-nio-8081-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-08-06T16:52:00.001+03:00  INFO 11520 --- [venusApis] [scheduling-1] c.n.venusApis.Jobs.LoadAlerts            : Running scheduled callable services
+2025-08-06T16:52:00.012+03:00  INFO 11520 --- [venusApis] [scheduling-1] c.n.venusApis.Repository.CoreDao         : StatementCallback; bad SQL grammar [{call LOAD_ALERT_MESSAGES}]
+2025-08-06T16:52:00.021+03:00  INFO 11520 --- [venusApis] [scheduling-1] c.n.venusApis.Repository.CoreDao         : StatementCallback; bad SQL grammar [{call  LOAD_ALERT_MESSAGES_DEP}]
+2025-08-06T16:52:00.021+03:00  INFO 11520 --- [venusApis] [scheduling-1] c.n.venusApis.Jobs.LoadAlerts            : Completed scheduled callable services
+2025-08-06T16:53:52.990+03:00  INFO 11520 --- [venusApis] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-06T16:53:53.301+03:00  INFO 11520 --- [venusApis] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-06T16:53:53.305+03:00  INFO 11520 --- [venusApis] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-08-06T16:53:53.417+03:00  INFO 11520 --- [venusApis] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-08-06T16:53:56.247+03:00  INFO 22064 --- [venusApis] [main] c.n.venusApis.VenusApisApplication       : Starting VenusApisApplication using Java 17.0.9 with PID 22064 (D:\Projects\VenusSmsService\venusApis\build\classes\java\main started by hp in D:\Projects\VenusSmsService\venusApis)
+2025-08-06T16:53:56.250+03:00  INFO 22064 --- [venusApis] [main] c.n.venusApis.VenusApisApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-08-06T16:53:57.201+03:00  INFO 22064 --- [venusApis] [main] ptablePropertiesBeanFactoryPostProcessor : Post-processing PropertySource instances
+2025-08-06T16:53:57.202+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Skipping PropertySource configurationProperties [class org.springframework.boot.context.properties.source.ConfigurationPropertySourcesPropertySource
+2025-08-06T16:53:57.204+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Skipping PropertySource servletConfigInitParams [class org.springframework.core.env.PropertySource$StubPropertySource
+2025-08-06T16:53:57.204+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Skipping PropertySource servletContextInitParams [class org.springframework.core.env.PropertySource$StubPropertySource
+2025-08-06T16:53:57.204+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource systemProperties [org.springframework.core.env.PropertiesPropertySource] to EncryptableMapPropertySourceWrapper
+2025-08-06T16:53:57.205+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource systemEnvironment [org.springframework.boot.env.SystemEnvironmentPropertySourceEnvironmentPostProcessor$OriginAwareSystemEnvironmentPropertySource] to EncryptableSystemEnvironmentPropertySourceWrapper
+2025-08-06T16:53:57.205+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource random [org.springframework.boot.env.RandomValuePropertySource] to EncryptablePropertySourceWrapper
+2025-08-06T16:53:57.205+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource Config resource 'class path resource [application.properties]' via location 'optional:classpath:/' [org.springframework.boot.env.OriginTrackedMapPropertySource] to EncryptableMapPropertySourceWrapper
+2025-08-06T16:53:57.205+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource applicationInfo [org.springframework.boot.ApplicationInfoPropertySource] to EncryptableMapPropertySourceWrapper
+2025-08-06T16:53:57.205+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource class path resource [application.properties] [org.springframework.core.io.support.ResourcePropertySource] to EncryptableMapPropertySourceWrapper
+2025-08-06T16:53:57.316+03:00  INFO 22064 --- [venusApis] [main] c.u.j.filter.DefaultLazyPropertyFilter   : Property Filter custom Bean not found with name 'encryptablePropertyFilter'. Initializing Default Property Filter
+2025-08-06T16:53:57.326+03:00  INFO 22064 --- [venusApis] [main] c.u.j.r.DefaultLazyPropertyResolver      : Property Resolver custom Bean not found with name 'encryptablePropertyResolver'. Initializing Default Property Resolver
+2025-08-06T16:53:57.328+03:00  INFO 22064 --- [venusApis] [main] c.u.j.d.DefaultLazyPropertyDetector      : Property Detector custom Bean not found with name 'encryptablePropertyDetector'. Initializing Default Property Detector
+2025-08-06T16:53:57.548+03:00  INFO 22064 --- [venusApis] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-08-06T16:53:57.563+03:00  INFO 22064 --- [venusApis] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-08-06T16:53:57.563+03:00  INFO 22064 --- [venusApis] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.43]
+2025-08-06T16:53:57.618+03:00  INFO 22064 --- [venusApis] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-08-06T16:53:57.618+03:00  INFO 22064 --- [venusApis] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1309 ms
+2025-08-06T16:53:57.671+03:00  INFO 22064 --- [venusApis] [main] c.u.j.encryptor.DefaultLazyEncryptor     : Found Custom Encryptor Bean org.jasypt.encryption.pbe.PooledPBEStringEncryptor@3d20e575 with name: encryptorBean
+2025-08-06T16:53:57.842+03:00  INFO 22064 --- [venusApis] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-08-06T16:53:58.278+03:00  INFO 22064 --- [venusApis] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection oracle.jdbc.driver.T4CConnection@61cda923
+2025-08-06T16:53:58.280+03:00  INFO 22064 --- [venusApis] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-08-06T16:53:58.473+03:00  WARN 22064 --- [venusApis] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-08-06T16:53:58.583+03:00 DEBUG 22064 --- [venusApis] [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 6 mappings in 'requestMappingHandlerMapping'
+2025-08-06T16:53:58.664+03:00 DEBUG 22064 --- [venusApis] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-08-06T16:53:58.779+03:00 DEBUG 22064 --- [venusApis] [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-08-06T16:53:58.819+03:00 DEBUG 22064 --- [venusApis] [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-08-06T16:53:58.921+03:00  INFO 22064 --- [venusApis] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-08-06T16:53:58.924+03:00  INFO 22064 --- [venusApis] [main] u.j.c.RefreshScopeRefreshedEventListener : Refreshing cached encryptable property sources on ServletWebServerInitializedEvent
+2025-08-06T16:53:58.924+03:00  INFO 22064 --- [venusApis] [main] CachingDelegateEncryptablePropertySource : Property Source systemProperties refreshed
+2025-08-06T16:53:58.924+03:00  INFO 22064 --- [venusApis] [main] CachingDelegateEncryptablePropertySource : Property Source systemEnvironment refreshed
+2025-08-06T16:53:58.924+03:00  INFO 22064 --- [venusApis] [main] CachingDelegateEncryptablePropertySource : Property Source random refreshed
+2025-08-06T16:53:58.924+03:00  INFO 22064 --- [venusApis] [main] CachingDelegateEncryptablePropertySource : Property Source Config resource 'class path resource [application.properties]' via location 'optional:classpath:/' refreshed
+2025-08-06T16:53:58.924+03:00  INFO 22064 --- [venusApis] [main] CachingDelegateEncryptablePropertySource : Property Source applicationInfo refreshed
+2025-08-06T16:53:58.924+03:00  INFO 22064 --- [venusApis] [main] CachingDelegateEncryptablePropertySource : Property Source class path resource [application.properties] refreshed
+2025-08-06T16:53:58.924+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource server.ports [org.springframework.core.env.MapPropertySource] to EncryptableMapPropertySourceWrapper
+2025-08-06T16:53:58.924+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Skipping PropertySource configurationProperties [class org.springframework.boot.context.properties.source.ConfigurationPropertySourcesPropertySource
+2025-08-06T16:53:58.924+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Skipping PropertySource servletConfigInitParams [class org.springframework.core.env.PropertySource$StubPropertySource
+2025-08-06T16:53:58.924+03:00  INFO 22064 --- [venusApis] [main] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource servletContextInitParams [org.springframework.web.context.support.ServletContextPropertySource] to EncryptableEnumerablePropertySourceWrapper
+2025-08-06T16:53:58.936+03:00  INFO 22064 --- [venusApis] [main] c.n.venusApis.VenusApisApplication       : Started VenusApisApplication in 3.312 seconds (process running for 3.796)
+2025-08-06T16:54:00.008+03:00  INFO 22064 --- [venusApis] [scheduling-1] c.n.venusApis.Jobs.LoadAlerts            : Running scheduled callable services
+2025-08-06T16:54:00.027+03:00 ERROR 22064 --- [venusApis] [scheduling-1] c.n.venusApis.Repository.CoreDao         : StatementCallback; bad SQL grammar [{call LOAD_ALERT_MESSAGES}]
+
+org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [{call LOAD_ALERT_MESSAGES}]
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:112) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:408) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:444) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at com.neptunesoftware.venusApis.Repository.CoreDao.executeCallableService(CoreDao.java:38) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:138) ~[spring-tx-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.9.jar:6.2.9]
+	at com.neptunesoftware.venusApis.Repository.CoreDao$$SpringCGLIB$$0.executeCallableService(<generated>) ~[main/:na]
+	at com.neptunesoftware.venusApis.Jobs.LoadAlerts.loadCallableAlerts(LoadAlerts.java:30) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.9.jar:6.2.9]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.14.9.jar:1.14.9]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:85) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.concurrent.ReschedulingRunnable.run(ReschedulingRunnable.java:96) ~[spring-context-6.2.9.jar:6.2.9]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.sql.SQLException: ORA-06550: line 1, column 7:
+PLS-00905: object SMSBANK.LOAD_ALERT_MESSAGES is invalid
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+
+https://docs.oracle.com/error-help/db/ora-06550/
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:709) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:609) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1347) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:1100) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:408) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:499) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:190) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CStatement.executeForRows(T4CStatement.java:1399) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.executeSQLStatement(OracleStatement.java:2008) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1621) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.executeInternal(OracleStatement.java:2686) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.execute(OracleStatement.java:2635) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatementWrapper.execute(OracleStatementWrapper.java:336) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:94) ~[HikariCP-5.1.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java) ~[HikariCP-5.1.0.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate$1ExecuteStatementCallback.doInStatement(JdbcTemplate.java:435) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:393) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	... 31 common frames omitted
+Caused by: oracle.jdbc.OracleDatabaseException: ORA-06550: line 1, column 7:
+PLS-00905: object SMSBANK.LOAD_ALERT_MESSAGES is invalid
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:717) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	... 47 common frames omitted
+
+2025-08-06T16:54:00.044+03:00 ERROR 22064 --- [venusApis] [scheduling-1] c.n.venusApis.Repository.CoreDao         : StatementCallback; bad SQL grammar [{call  LOAD_ALERT_MESSAGES_DEP}]
+
+org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [{call  LOAD_ALERT_MESSAGES_DEP}]
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:112) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:408) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:444) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at com.neptunesoftware.venusApis.Repository.CoreDao.executeCallableService(CoreDao.java:38) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:138) ~[spring-tx-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.9.jar:6.2.9]
+	at com.neptunesoftware.venusApis.Repository.CoreDao$$SpringCGLIB$$0.executeCallableService(<generated>) ~[main/:na]
+	at com.neptunesoftware.venusApis.Jobs.LoadAlerts.loadCallableAlerts(LoadAlerts.java:30) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.9.jar:6.2.9]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.14.9.jar:1.14.9]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:85) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.concurrent.ReschedulingRunnable.run(ReschedulingRunnable.java:96) ~[spring-context-6.2.9.jar:6.2.9]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.sql.SQLException: ORA-06550: line 1, column 7:
+PLS-00905: object SMSBANK.LOAD_ALERT_MESSAGES_DEP is invalid
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+
+https://docs.oracle.com/error-help/db/ora-06550/
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:709) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:609) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1347) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:1100) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:408) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:499) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:190) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CStatement.executeForRows(T4CStatement.java:1399) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.executeSQLStatement(OracleStatement.java:2008) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1621) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.executeInternal(OracleStatement.java:2686) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.execute(OracleStatement.java:2635) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatementWrapper.execute(OracleStatementWrapper.java:336) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:94) ~[HikariCP-5.1.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java) ~[HikariCP-5.1.0.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate$1ExecuteStatementCallback.doInStatement(JdbcTemplate.java:435) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:393) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	... 31 common frames omitted
+Caused by: oracle.jdbc.OracleDatabaseException: ORA-06550: line 1, column 7:
+PLS-00905: object SMSBANK.LOAD_ALERT_MESSAGES_DEP is invalid
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:717) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	... 47 common frames omitted
+
+2025-08-06T16:54:00.076+03:00  INFO 22064 --- [venusApis] [scheduling-1] c.n.venusApis.Jobs.LoadAlerts            : Completed scheduled callable services
+2025-08-06T16:54:16.069+03:00  INFO 22064 --- [venusApis] [http-nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-06T16:54:16.069+03:00  INFO 22064 --- [venusApis] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-08-06T16:54:16.069+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2025-08-06T16:54:16.069+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2025-08-06T16:54:16.069+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2025-08-06T16:54:16.070+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@70d5d96b
+2025-08-06T16:54:16.070+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@3e2d8623
+2025-08-06T16:54:16.070+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-08-06T16:54:16.070+03:00  INFO 22064 --- [venusApis] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-08-06T16:54:16.250+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/apis/v2/alerts-channel/updateAccountStats", parameters={}
+2025-08-06T16:54:16.252+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.neptunesoftware.venusApis.Controller.AlertsChannel#updateAccountStats(String)
+2025-08-06T16:54:16.263+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to ["{"acctNo":"18020300003","msgCount":2}"]
+2025-08-06T16:54:16.329+03:00  INFO 22064 --- [venusApis] [http-nio-8081-exec-1] c.n.venusApis.Repository.CoreDao         : updateAccountStats account number: 18020300003 last sent out alerts count 2
+2025-08-06T16:54:16.351+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json]
+2025-08-06T16:54:16.368+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.neptunesoftware.venusApis.Models.Update@6c7210a]
+2025-08-06T16:54:16.375+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-08-06T16:54:55.907+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-6] o.s.web.servlet.DispatcherServlet        : POST "/apis/v2/alerts-channel/updateAccountStats", parameters={}
+2025-08-06T16:54:55.908+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-6] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.neptunesoftware.venusApis.Controller.AlertsChannel#updateAccountStats(String)
+2025-08-06T16:54:55.908+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-6] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to ["{"acctNo":"18020300003","msgCount":2}"]
+2025-08-06T16:54:55.923+03:00  INFO 22064 --- [venusApis] [http-nio-8081-exec-6] c.n.venusApis.Repository.CoreDao         : updateAccountStats account number: 18020300003 last sent out alerts count 2
+2025-08-06T16:54:55.932+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json]
+2025-08-06T16:54:55.933+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.neptunesoftware.venusApis.Models.Update@6c337e93]
+2025-08-06T16:54:55.934+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-08-06T16:56:00.001+03:00  INFO 22064 --- [venusApis] [scheduling-1] c.n.venusApis.Jobs.LoadAlerts            : Running scheduled callable services
+2025-08-06T16:56:00.016+03:00 ERROR 22064 --- [venusApis] [scheduling-1] c.n.venusApis.Repository.CoreDao         : StatementCallback; bad SQL grammar [{call LOAD_ALERT_MESSAGES}]
+
+org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [{call LOAD_ALERT_MESSAGES}]
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:112) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:408) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:444) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at com.neptunesoftware.venusApis.Repository.CoreDao.executeCallableService(CoreDao.java:38) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:138) ~[spring-tx-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.9.jar:6.2.9]
+	at com.neptunesoftware.venusApis.Repository.CoreDao$$SpringCGLIB$$0.executeCallableService(<generated>) ~[main/:na]
+	at com.neptunesoftware.venusApis.Jobs.LoadAlerts.loadCallableAlerts(LoadAlerts.java:30) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.9.jar:6.2.9]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.14.9.jar:1.14.9]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:85) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.concurrent.ReschedulingRunnable.run(ReschedulingRunnable.java:96) ~[spring-context-6.2.9.jar:6.2.9]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.sql.SQLException: ORA-06550: line 1, column 7:
+PLS-00905: object SMSBANK.LOAD_ALERT_MESSAGES is invalid
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+
+https://docs.oracle.com/error-help/db/ora-06550/
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:709) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:609) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1347) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:1100) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:408) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:499) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:190) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CStatement.executeForRows(T4CStatement.java:1399) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.executeSQLStatement(OracleStatement.java:2008) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1621) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.executeInternal(OracleStatement.java:2686) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.execute(OracleStatement.java:2635) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatementWrapper.execute(OracleStatementWrapper.java:336) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:94) ~[HikariCP-5.1.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java) ~[HikariCP-5.1.0.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate$1ExecuteStatementCallback.doInStatement(JdbcTemplate.java:435) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:393) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	... 31 common frames omitted
+Caused by: oracle.jdbc.OracleDatabaseException: ORA-06550: line 1, column 7:
+PLS-00905: object SMSBANK.LOAD_ALERT_MESSAGES is invalid
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:717) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	... 47 common frames omitted
+
+2025-08-06T16:56:00.024+03:00 ERROR 22064 --- [venusApis] [scheduling-1] c.n.venusApis.Repository.CoreDao         : StatementCallback; bad SQL grammar [{call  LOAD_ALERT_MESSAGES_DEP}]
+
+org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [{call  LOAD_ALERT_MESSAGES_DEP}]
+	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:112) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:116) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.translateException(JdbcTemplate.java:1556) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:408) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:444) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at com.neptunesoftware.venusApis.Repository.CoreDao.executeCallableService(CoreDao.java:38) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:138) ~[spring-tx-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.9.jar:6.2.9]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728) ~[spring-aop-6.2.9.jar:6.2.9]
+	at com.neptunesoftware.venusApis.Repository.CoreDao$$SpringCGLIB$$0.executeCallableService(<generated>) ~[main/:na]
+	at com.neptunesoftware.venusApis.Jobs.LoadAlerts.loadCallableAlerts(LoadAlerts.java:30) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.9.jar:6.2.9]
+	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.14.9.jar:1.14.9]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:85) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.9.jar:6.2.9]
+	at org.springframework.scheduling.concurrent.ReschedulingRunnable.run(ReschedulingRunnable.java:96) ~[spring-context-6.2.9.jar:6.2.9]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.sql.SQLException: ORA-06550: line 1, column 7:
+PLS-00905: object SMSBANK.LOAD_ALERT_MESSAGES_DEP is invalid
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+
+https://docs.oracle.com/error-help/db/ora-06550/
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:709) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:609) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1347) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:1100) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:408) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:499) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:190) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.T4CStatement.executeForRows(T4CStatement.java:1399) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.executeSQLStatement(OracleStatement.java:2008) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1621) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.executeInternal(OracleStatement.java:2686) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatement.execute(OracleStatement.java:2635) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at oracle.jdbc.driver.OracleStatementWrapper.execute(OracleStatementWrapper.java:336) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:94) ~[HikariCP-5.1.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java) ~[HikariCP-5.1.0.jar:na]
+	at org.springframework.jdbc.core.JdbcTemplate$1ExecuteStatementCallback.doInStatement(JdbcTemplate.java:435) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:393) ~[spring-jdbc-6.2.9.jar:6.2.9]
+	... 31 common frames omitted
+Caused by: oracle.jdbc.OracleDatabaseException: ORA-06550: line 1, column 7:
+PLS-00905: object SMSBANK.LOAD_ALERT_MESSAGES_DEP is invalid
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:717) ~[ojdbc11-23.5.0.24.07.jar:23.5.0.24.07]
+	... 47 common frames omitted
+
+2025-08-06T16:56:00.024+03:00  INFO 22064 --- [venusApis] [scheduling-1] c.n.venusApis.Jobs.LoadAlerts            : Completed scheduled callable services
+2025-08-06T16:56:25.883+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/apis/v2/alerts-channel/updateAccountStats", parameters={}
+2025-08-06T16:56:25.883+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.neptunesoftware.venusApis.Controller.AlertsChannel#updateAccountStats(String)
+2025-08-06T16:56:25.884+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to ["{"acctNo":"180203000003","msgCount":2}"]
+2025-08-06T16:56:25.895+03:00  INFO 22064 --- [venusApis] [http-nio-8081-exec-4] c.n.venusApis.Repository.CoreDao         : updateAccountStats account number: 180203000003 last sent out alerts count 2
+2025-08-06T16:56:25.915+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json]
+2025-08-06T16:56:25.915+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.neptunesoftware.venusApis.Models.Update@1d1840b5]
+2025-08-06T16:56:25.916+03:00 DEBUG 22064 --- [venusApis] [http-nio-8081-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-08-06T16:57:13.187+03:00  INFO 22064 --- [venusApis] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-06T16:57:13.444+03:00  INFO 22064 --- [venusApis] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-06T16:57:13.448+03:00  INFO 22064 --- [venusApis] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-08-06T16:57:13.502+03:00  INFO 22064 --- [venusApis] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

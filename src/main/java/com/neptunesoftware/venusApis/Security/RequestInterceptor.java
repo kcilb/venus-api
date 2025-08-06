@@ -27,13 +27,13 @@ public class RequestInterceptor implements HandlerInterceptor {
     private final AppProps appProps;
     private final LicenseManager licenseManager;
     private final ItemCacheService cacheService;
-    private final Logging logger;
+    //private final Logging logger;
 
-    public RequestInterceptor(AppProps appProps, LicenseManager licenseManager, ItemCacheService cacheService, Logging logger) {
+    public RequestInterceptor(AppProps appProps, LicenseManager licenseManager
+            , ItemCacheService cacheService) {
         this.appProps = appProps;
         this.licenseManager = licenseManager;
         this.cacheService = cacheService;
-        this.logger = logger;
     }
 
     private void interceptorResponse(HttpServletResponse response, String message) throws IOException {
@@ -64,9 +64,9 @@ public class RequestInterceptor implements HandlerInterceptor {
                 String bankName = appProps.bankName;
 
                 if (Objects.isNull(coreDt) || Objects.isNull(bankName)) {
-                    logger.info("LICENSE PARAMS CHECK");
-                    logger.info(coreDt);
-                    logger.info(bankName);
+                    Logging.info("LICENSE PARAMS CHECK");
+                    Logging.info(coreDt);
+                    Logging.info(bankName);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     interceptorResponse(response, "Invalid bank parameters");
                     return false;
@@ -77,9 +77,9 @@ public class RequestInterceptor implements HandlerInterceptor {
                 String expiryDt = validationKeys[0];
 
                 if (!validationKeys[1].equals(bankName) || !validationKeys[2].equals("E_COL")) {
-                    logger.info("KEY PARAMS CHECK");
-                    logger.info(bankName);
-                    logger.info(validationKeys[2]);
+                    Logging.info("KEY PARAMS CHECK");
+                    Logging.info(bankName);
+                    Logging.info(validationKeys[2]);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     interceptorResponse(response, "Invalid Key Specified");
                     return false;
