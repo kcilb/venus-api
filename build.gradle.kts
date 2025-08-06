@@ -23,7 +23,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("com.github.ulisesbocchio:jasypt-spring-boot:3.0.4")
 	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("org.springframework.session:spring-session-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	runtimeOnly("com.oracle.database.jdbc:ojdbc11")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

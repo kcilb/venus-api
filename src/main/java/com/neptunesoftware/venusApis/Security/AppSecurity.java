@@ -27,7 +27,7 @@ import java.util.List;
 public class AppSecurity {
 
     private final AppProps appProps;
-    private static final String[] AUTH_WHITELIST = new String[]{"/apis/v2/auth/*","/apis/v2/extras/**", "/apis/v2/alerts-channel/**"};
+    private static final String[] AUTH_WHITELIST = new String[]{"/apis/v2/auth/*","/apis/v2/extras/*", "/apis/v2/alerts-channel/**"};
 
     public AppSecurity(AppProps appProps) {
         this.appProps = appProps;
