@@ -1,11 +1,15 @@
 package com.neptunesoftware.venusApis.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neptunesoftware.venusApis.Services.AlertChannelService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/apis/v2/alerts-channel")
@@ -25,8 +29,6 @@ public class AlertsChannel {
 
     @PostMapping(value = "updateAccountStats", consumes = "application/json",produces = "application/json")
     public ResponseEntity<?> updateAccountStats(@RequestBody String body) {
-        String acctNo = "";
-        String msgId = "";
-        return ResponseEntity.ok(alertChannelService.updateAccountStats(acctNo,msgId));
+        return ResponseEntity.ok(alertChannelService.updateAccountStats(body));
     }
 }

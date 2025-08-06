@@ -1,11 +1,14 @@
 package com.neptunesoftware.venusApis.Services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neptunesoftware.venusApis.Models.ApiResponse;
 import com.neptunesoftware.venusApis.Models.TrxnSmsList;
+import com.neptunesoftware.venusApis.Models.Update;
 import com.neptunesoftware.venusApis.Repository.CoreDao;
 import com.neptunesoftware.venusApis.Util.StaticRefs;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.logging.Logger;
 
 @Service
@@ -30,12 +33,18 @@ public class AlertChannelService {
 
     }
 
-    public ApiResponse<?> updateAccountStats(String acctNo, String msgId) {
+    public Update updateAccountStats(String body) {
         try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String,Object> map = mapper.readValue(body, Map.class);
+            String acctNo = (String) map.get("acctNo");
+            Integer msgCount = (Integer)map.get("msgCount");
 
+            return coreDao.updateAccountStats(acctNo, msgCount);
         } catch (Exception e) {
             logger.info(e.getMessage());
+            return new Update("96",
+                    "An error occurred while processing your request ", null);
         }
-        return ApiResponse.builder().build();
     }
 }

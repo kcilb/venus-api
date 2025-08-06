@@ -2,6 +2,7 @@ package com.neptunesoftware.venusApis.Security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neptunesoftware.venusApis.Beans.AppProps;
+import com.neptunesoftware.venusApis.Beans.ItemCacheService;
 import com.neptunesoftware.venusApis.Models.ApiResponse;
 import com.neptunesoftware.venusApis.Repository.CoreDao;
 import com.neptunesoftware.venusApis.Util.LicenseManager;
@@ -25,13 +26,13 @@ public class RequestInterceptor implements HandlerInterceptor {
 
     private final AppProps appProps;
     private final LicenseManager licenseManager;
-    private final CoreDao coreDao;
+    private final ItemCacheService cacheService;
     private final Logging logger;
 
-    public RequestInterceptor(AppProps appProps, LicenseManager licenseManager, CoreDao coreDao, Logging logger) {
+    public RequestInterceptor(AppProps appProps, LicenseManager licenseManager, ItemCacheService cacheService, Logging logger) {
         this.appProps = appProps;
         this.licenseManager = licenseManager;
-        this.coreDao = coreDao;
+        this.cacheService = cacheService;
         this.logger = logger;
     }
 
@@ -59,7 +60,7 @@ public class RequestInterceptor implements HandlerInterceptor {
             try {
 
                 System.out.println("<< preHandle");
-                String coreDt = coreDao.findProcessingDt();
+                String coreDt = cacheService.getCachedItem().processDt;
                 String bankName = appProps.bankName;
 
                 if (Objects.isNull(coreDt) || Objects.isNull(bankName)) {
