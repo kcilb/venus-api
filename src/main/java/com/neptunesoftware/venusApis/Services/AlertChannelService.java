@@ -1,6 +1,7 @@
 package com.neptunesoftware.venusApis.Services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.neptunesoftware.venusApis.Beans.ItemCacheService;
 import com.neptunesoftware.venusApis.Models.ApiResponse;
 import com.neptunesoftware.venusApis.Models.TrxnSmsList;
 import com.neptunesoftware.venusApis.Models.Update;
@@ -16,9 +17,11 @@ public class AlertChannelService {
 
     private Logger logger = Logger.getLogger(AlertChannelService.class.getName());
 
+    private final ItemCacheService itemCacheService;
     private final CoreDao coreDao;
 
-    public AlertChannelService(CoreDao coreDao) {
+    public AlertChannelService(ItemCacheService itemCacheService, CoreDao coreDao) {
+        this.itemCacheService = itemCacheService;
         this.coreDao = coreDao;
     }
 
@@ -40,7 +43,7 @@ public class AlertChannelService {
             String acctNo = (String) map.get("acctNo");
             Integer msgCount = (Integer)map.get("msgCount");
 
-            return coreDao.updateAccountStats(acctNo, msgCount);
+            return coreDao.updateAccountStats(acctNo, msgCount, itemCacheService.getCachedItem().processDt);
         } catch (Exception e) {
             logger.info(e.getMessage());
             return new Update("96",

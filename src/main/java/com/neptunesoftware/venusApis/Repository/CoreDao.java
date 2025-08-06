@@ -2,9 +2,12 @@ package com.neptunesoftware.venusApis.Repository;
 
 import com.neptunesoftware.venusApis.Beans.AppProps;
 import com.neptunesoftware.venusApis.Models.CachedItems;
+import com.neptunesoftware.venusApis.Models.SMS;
+import com.neptunesoftware.venusApis.Models.TrxnSmsList;
 import com.neptunesoftware.venusApis.Models.Update;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,52 +42,66 @@ public class CoreDao {
     }
 
 
-    public Update updateAccountStats(String acctNo, int msgCount) {
-        return new Update("92", "No updates were performed", null);
-//        try (Connection conn = XapiServices.getConnection();
-//             PreparedStatement updateStmt = conn
-//                     .prepareStatement("update sms_count set sms_count = ?, total_count = ?, chrge_status =? where acct_no = ? and log_date >= trunc((select to_date(display_value,'dd/mm/yyyy') from "
-//                             + XapiSettings.coreschema
-//                             + ".ctrl_parameter where param_cd = 'S02'),'mm')");
-//             PreparedStatement insertStmt = conn
-//                     .prepareStatement("insert into sms_count(sms_count,total_count,chrge_status,acct_no, log_date) values(?,?,?,?,(select to_date(display_value,'dd/mm/yyyy') from "
-//                             + XapiSettings.coreschema
-//                             + ".ctrl_parameter where param_cd = 'S02'))")) {
-//
+//    public TrxnSmsList loadTrxnAlerts(String lastMsgId) {
+//        TrxnSmsList tranList;
+//        try (Connection conn = XapiServices.getConnection()) {
 //            QueryRunner queryRunner = new QueryRunner();
-//            Map<String, Object> map = queryRunner.query(conn,
-//                    "select * from v_alert_count where acct_no = ?",
-//                    new MapHandler(), acctNo);
-//
-//            int updateCount = 0;
-//            if (map != null && !map.isEmpty()) {
-//                int totalSMS = Integer.parseInt(String.valueOf(map
-//                        .get("sms_count"))) + msgCount;
-//                updateStmt.setInt(1, totalSMS);
-//                updateStmt.setInt(2, totalSMS);
-//                updateStmt.setString(3, "N");
-//                updateStmt.setString(4, acctNo);
-//                updateCount = updateStmt.executeUpdate();
-//            } else {
-//                insertStmt.setInt(1, msgCount);
-//                insertStmt.setInt(2, msgCount);
-//                insertStmt.setString(3, "N");
-//                insertStmt.setString(4, acctNo);
-//                updateCount = insertStmt.executeUpdate();
-//            }
-//            if (updateCount >= 0) {
-//                return new Update("0", "Success", null);
-//            }
-//            return new Update("92", "No updates were performed", null);
+//            List<SMS> mapList = queryRunner
+//                    .query(conn,
+//                            "select * from v_outward_messages_dep where recordID > ? and rownum <= ?",
+//                            new BeanListHandler<SMS>(
+//                                    SMS.class),
+//                            ((lastMsgId != null)
+//                                    && (lastMsgId.trim().length() > 0) ? lastMsgId
+//                                    : "0"), XapiSettings.fetchlimit);
+//            if (mapList != null && !mapList.isEmpty())
+//                tranList = new TrxnSmsList("0", "Success", mapList);
+//            else
+//                tranList = new TrxnSmsList("21", "No records available", null);
 //        } catch (Exception e) {
-//            return new Update("96",
-//                    "An error occurred while processing your request "
-//                            + e.getLocalizedMessage(), null);
+//            XapiLogger.getLogger().error(e);
+//            tranList = new TrxnSmsList("96",
+//                    "An error occcured while processing your request.", null);
 //        } finally {
-//            logger.info(
-//                    "updateAccountStats account number: " + acctNo
-//                            + " last sent out alerts count " + msgCount);
+//            XapiLogger.getLogger().info(
+//                    "Last retrieved transaction alert id: " + lastMsgId);
 //        }
+//        return tranList;
+//    }
+
+
+    @Transactional
+    public Update updateAccountStats(String acctNo, int msgCount, String processDt) {
+        try {
+            String updateSql = "update sms_count set sms_count = ?, total_count = ?, chrge_status =? where acct_no = ? ";
+
+            String insertSql = "insert into sms_count(sms_count,total_count,chrge_status,acct_no, log_date) " +
+                    "values(?,?,?,?,?)";
+
+
+            Map<String, Object> map = jdbcTemplate.queryForMap("select * from v_alert_count where acct_no = ?", acctNo);
+            int updateCount = 0;
+            if (!map.isEmpty()) {
+                int totalSMS = Integer.parseInt(String.valueOf(map
+                        .get("sms_count"))) + msgCount;
+                updateCount = jdbcTemplate.update(updateSql, totalSMS, totalSMS, "N", acctNo);
+            } else {
+                updateCount = jdbcTemplate.update(insertSql, msgCount, msgCount, "N", processDt);
+            }
+
+            if (updateCount >= 0) {
+                return new Update("00", "Success", null);
+            }
+            return new Update("92", "No updates were performed", null);
+        } catch (Exception e) {
+            return new Update("96",
+                    "An error occurred while processing your request "
+                            + e.getLocalizedMessage(), null);
+        } finally {
+            logger.info(
+                    "updateAccountStats account number: " + acctNo
+                            + " last sent out alerts count " + msgCount);
+        }
     }
 
 
