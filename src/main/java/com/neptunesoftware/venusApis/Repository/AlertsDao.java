@@ -7,55 +7,27 @@ import com.neptunesoftware.venusApis.Models.TrxnSmsList;
 import com.neptunesoftware.venusApis.Models.Update;
 import com.neptunesoftware.venusApis.Util.Logging;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.*;
 
 
 @Repository
 @Slf4j
-public class CoreDao {
+public class AlertsDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final AppProps appProps;
 
-    public CoreDao(JdbcTemplate jdbcTemplate, AppProps appProps) {
+    public AlertsDao(JdbcTemplate jdbcTemplate, AppProps appProps) {
         this.jdbcTemplate = jdbcTemplate;
         this.appProps = appProps;
     }
 
-    public void executeCallableService(String task) {
-        try {
-            jdbcTemplate.execute("{call " + task + "}");
-        } catch (Exception e) {
-            Logging.error(e.getMessage(), e);
-        }
-    }
-
-    public String findProcessingDt() {
-        return jdbcTemplate.queryForObject("SELECT DISPLAY_VALUE FROM " + appProps.coreSchema + ".ctrl_parameter WHERE PARAM_CD = 'S02'", String.class);
-    }
-
-    public CachedItems loadCacheItems() {
-        try {
-            CachedItems item = new CachedItems();
-            item.processDt = findProcessingDt();
-            item.callableTasks = appProps.callableTasks.split(",");
-            return item;
-        } catch (Exception e) {
-            Logging.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
-    }
 
     public TrxnSmsList findTransactionAlerts(String lastMsgId) {
         TrxnSmsList tranList;

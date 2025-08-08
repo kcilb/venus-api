@@ -1,11 +1,7 @@
 package com.neptunesoftware.venusApis.Beans;
 
-import com.neptunesoftware.venusApis.Repository.CoreDao;
 import com.neptunesoftware.venusApis.Security.RequestInterceptor;
 import com.neptunesoftware.venusApis.Util.LicenseManager;
-import com.neptunesoftware.venusApis.Util.Logging;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

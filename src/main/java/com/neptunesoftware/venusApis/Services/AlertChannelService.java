@@ -2,15 +2,10 @@ package com.neptunesoftware.venusApis.Services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neptunesoftware.venusApis.Beans.ItemCacheService;
-import com.neptunesoftware.venusApis.Models.ApiResponse;
 import com.neptunesoftware.venusApis.Models.TrxnSmsList;
 import com.neptunesoftware.venusApis.Models.Update;
-import com.neptunesoftware.venusApis.Repository.CoreDao;
+import com.neptunesoftware.venusApis.Repository.AlertsDao;
 import com.neptunesoftware.venusApis.Util.Logging;
-import com.neptunesoftware.venusApis.Util.StaticRefs;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -19,18 +14,18 @@ import java.util.Map;
 public class AlertChannelService {
 
     private final ItemCacheService itemCacheService;
-    private final CoreDao coreDao;
+    private final AlertsDao alertsDao;
 
-    public AlertChannelService(ItemCacheService itemCacheService, CoreDao coreDao) {
+    public AlertChannelService(ItemCacheService itemCacheService, AlertsDao alertsDao) {
         this.itemCacheService = itemCacheService;
-        this.coreDao = coreDao;
+        this.alertsDao = alertsDao;
     }
 
     public TrxnSmsList findTransactionAlerts(String body) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             String lastMsgId = mapper.readValue(body, String.class);
-            return coreDao.findTransactionAlerts(lastMsgId);
+            return alertsDao.findTransactionAlerts(lastMsgId);
         } catch (Exception e) {
             Logging.error(e.getMessage(),e);
             return new TrxnSmsList("96",
@@ -46,7 +41,7 @@ public class AlertChannelService {
             String acctNo = (String) map.get("acctNo");
             Integer msgCount = (Integer)map.get("msgCount");
 
-            return coreDao.updateAccountStats(acctNo, msgCount, itemCacheService.getCachedItem().processDt);
+            return alertsDao.updateAccountStats(acctNo, msgCount, itemCacheService.getCachedItem().processDt);
         } catch (Exception e) {
             Logging.error(e.getMessage(),e);
             return new Update("96",

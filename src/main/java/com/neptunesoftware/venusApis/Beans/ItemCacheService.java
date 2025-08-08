@@ -2,32 +2,28 @@ package com.neptunesoftware.venusApis.Beans;
 
 
 import com.neptunesoftware.venusApis.Models.CachedItems;
-import com.neptunesoftware.venusApis.Repository.CoreDao;
+import com.neptunesoftware.venusApis.Repository.AdminDao;
+import com.neptunesoftware.venusApis.Repository.AlertsDao;
 import com.neptunesoftware.venusApis.Util.Logging;
-import org.apache.juli.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Logger;
-
 @Service
 public class ItemCacheService {
 
-    private final CoreDao coreDao;
+    private final AdminDao adminDao;
     private CachedItems cachedItems;
     private final Object lock = new Object();
 
     @Autowired
-    public ItemCacheService(CoreDao coreDao) {
-        this.coreDao = coreDao;
+    public ItemCacheService(AdminDao adminDao) {
+        this.adminDao = adminDao;
         loadCache();
     }
 
     private void loadCache() {
-        CachedItems freshItems = coreDao.loadCacheItems();
+        CachedItems freshItems = adminDao.loadCacheItems();
         synchronized (lock) {
             this.cachedItems = freshItems;
         }
