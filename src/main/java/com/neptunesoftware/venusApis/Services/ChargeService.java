@@ -98,7 +98,7 @@ public class ChargeService {
         boolean hasMoreResults = true;
 
         while (hasMoreResults) {
-            List<AlertRequest> batch = fetchBatch(pageNumber,resultSetView);
+            List<AlertRequest> batch = fetchBatch(pageNumber, resultSetView);
             if (batch.isEmpty()) {
                 hasMoreResults = false;
                 continue;
@@ -128,17 +128,13 @@ public class ChargeService {
     private List<AlertRequest> fetchBatch(int pageNumber, String resultSetView) throws SQLException {
 
         List<AlertRequest> batch = new ArrayList<>();
-        try {
-            List<AlertRequest> alertRequests = alertsDao.findPendingCharges(pageNumber, PAGE_SIZE, resultSetView);
+        List<AlertRequest> alertRequests = alertsDao.findPendingCharges(pageNumber, PAGE_SIZE, resultSetView);
 
-            // check amount and currency
-            while (rs.next()) {
-                AlertCharge charge = computeCharge(rs.getInt("sms_count"));
-                batch.add(buildAlertRequest(rs, charge));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        // check amount and currency
+//            while (rs.next()) {
+//                AlertCharge charge = computeCharge(rs.getInt("sms_count"));
+//                batch.add(buildAlertRequest(rs, charge));
+//            }
         return batch;
     }
 
@@ -155,24 +151,24 @@ public class ChargeService {
                 false, false, entry.getInt("sms_count"), entry.getDate("log_date"));
     }
 
-    private void handleInsufficientFunds(Connection con, AlertRequest chargeData) throws SQLException {
-        PreparedStatement updateScript = con.prepareStatement(
-                "update SMS_COUNT set charge_mode='Tiered', chrge_status=?, sms_count=?, charge_amount=?, tran_date=?, "
-                        + "error_reason=? where acct_no =? and sms_count=? and log_date=?");
-
-        updateScript.setString(1, "N");
-        updateScript.setInt(2, chargeData.getSmsCount());
-        updateScript.setBigDecimal(3, BigDecimal.ZERO);
-        updateScript.setDate(4, new java.sql.Date(new Date().getTime()));
-        updateScript.setString(5, "Insufficient Funds On Account.");
-        updateScript.setString(6, chargeData.getAccount());
-        updateScript.setInt(7, chargeData.getSmsCount());
-        updateScript.setDate(8, chargeData.getLogDate());
-        updateScript.executeUpdate();
+    private void handleInsufficientFunds(AlertRequest chargeData) throws SQLException {
+//        PreparedStatement updateScript = con.prepareStatement(
+//                "update SMS_COUNT set charge_mode='Tiered', chrge_status=?, sms_count=?, charge_amount=?, tran_date=?, "
+//                        + "error_reason=? where acct_no =? and sms_count=? and log_date=?");
+//
+//        updateScript.setString(1, "N");
+//        updateScript.setInt(2, chargeData.getSmsCount());
+//        updateScript.setBigDecimal(3, BigDecimal.ZERO);
+//        updateScript.setDate(4, new java.sql.Date(new Date().getTime()));
+//        updateScript.setString(5, "Insufficient Funds On Account.");
+//        updateScript.setString(6, chargeData.getAccount());
+//        updateScript.setInt(7, chargeData.getSmsCount());
+//        updateScript.setDate(8, chargeData.getLogDate());
+//        updateScript.executeUpdate();
     }
 
     private void processSingleCharge(AlertRequest chargeData) {
-        try (Connection con = getConnection()) {
+        try {
 
             Logging.info(">>>>>>>>>>>>>>>>> ACCOUNT_CHARGE_PROCESSING <<<<<<<<<<<<<<<<<<<<<<<");
             Logging
@@ -190,13 +186,13 @@ public class ChargeService {
                     .info("Handling Charge Posting for " + chargeData.getAccount() + " with bal " + balance);
 
             if (balance.compareTo(chargeData.getChargeAmount()) <= 0) {
-                handleInsufficientFunds(con, chargeData);
+                handleInsufficientFunds(chargeData);
                 lowFunds.incrementAndGet();
                 processedRecords.incrementAndGet();
                 return;
             }
 
-            boolean success = attemptChargePostingWithRetry(con, chargeData);
+            boolean success = attemptChargePostingWithRetry(chargeData);
             if (success) {
                 posted.incrementAndGet();
                 totalCharge.updateAndGet(current ->
@@ -241,36 +237,37 @@ public class ChargeService {
     }
 
 
-    private boolean attemptChargePostingWithRetry(Connection con, AlertRequest chargeData) throws SQLException {
-        int attempts = 0;
-        while (attempts < MAX_RETRIES) {
-            try {
-                boolean bankPosted = postCharge("Bank", chargeData);
-                boolean taxPosted = bankPosted && postCharge("Tax", chargeData);
-                boolean vendorPosted = taxPosted && postCharge("Vendor", chargeData);
+    private boolean attemptChargePostingWithRetry(AlertRequest chargeData) throws SQLException {
+//        int attempts = 0;
+//        while (attempts < MAX_RETRIES) {
+//            try {
+//                boolean bankPosted = postCharge("Bank", chargeData);
+//                boolean taxPosted = bankPosted && postCharge("Tax", chargeData);
+//                boolean vendorPosted = taxPosted && postCharge("Vendor", chargeData);
+//
+//                if (vendorPosted) {
+//                    updateChargeStatus(con, chargeData, "C", "Success");
+//                    return true;
+//                } else {
+//                    logFailedCharge(con, chargeData);
+//                    return false;
+//                }
+//            } catch (Exception e) {
+//                attempts++;
+//                Logging.warn(String.format(
+//                        "Attempt %d failed for %s: %s",
+//                        attempts, chargeData.getAccount(), e.getMessage()));
+//
+//                if (attempts < MAX_RETRIES) {
+//                    try {
+//                        Thread.sleep(RETRY_DELAY_MS * attempts);
+//                    } catch (InterruptedException ie) {
+//                        Thread.currentThread().interrupt();
+//                    }
+//                }
+//            }
+//        }
 
-                if (vendorPosted) {
-                    updateChargeStatus(con, chargeData, "C", "Success");
-                    return true;
-                } else {
-                    logFailedCharge(con, chargeData);
-                    return false;
-                }
-            } catch (Exception e) {
-                attempts++;
-                Logging.warn(String.format(
-                        "Attempt %d failed for %s: %s",
-                        attempts, chargeData.getAccount(), e.getMessage()));
-
-                if (attempts < MAX_RETRIES) {
-                    try {
-                        Thread.sleep(RETRY_DELAY_MS * attempts);
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
-        }
         return false;
     }
 
