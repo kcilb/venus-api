@@ -1,5 +1,6 @@
 package com.neptunesoftware.venusApis.Services;
 
+import com.neptunesoftware.venusApis.Models.AlertCharge;
 import com.neptunesoftware.venusApis.Models.ApiResponse;
 import com.neptunesoftware.venusApis.Models.Response;
 import com.neptunesoftware.venusApis.Repository.AdminDao;
@@ -50,18 +51,18 @@ public class AdminService {
         }
     }
 
-    public ApiResponse<List<Map<String, Object>>> findCharges(Integer alertCrncyId) {
+    public ApiResponse<List<AlertCharge>> findCharges(Integer alertCrncyId) {
         try {
-            List<Map<String, Object>> list = adminDao.findCharges(alertCrncyId);
+            List<AlertCharge> list = adminDao.findCharges(alertCrncyId);
             if (list.isEmpty()) {
-                return ApiResponse.<List<Map<String, Object>>>builder().data(null)
+                return ApiResponse.<List<AlertCharge>>builder().data(null)
                         .response(StaticRefs.noRecords()).build();
             } else {
-                return ApiResponse.<List<Map<String, Object>>>builder().data(list).build();
+                return ApiResponse.<List<AlertCharge>>builder().data(list).build();
             }
         } catch (Exception e) {
             Logging.info(e.getMessage());
-            return ApiResponse.<List<Map<String, Object>>>builder().data(null)
+            return ApiResponse.<List<AlertCharge>>builder().data(null)
                     .response(StaticRefs.serverError()).build();
         }
     }

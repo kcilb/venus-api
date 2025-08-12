@@ -2,6 +2,7 @@ package com.neptunesoftware.venusApis.Repository;
 
 
 import com.neptunesoftware.venusApis.Beans.AppProps;
+import com.neptunesoftware.venusApis.Models.AlertCharge;
 import com.neptunesoftware.venusApis.Models.CachedItems;
 import com.neptunesoftware.venusApis.Util.Logging;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,9 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +38,7 @@ public class AdminDao {
             CachedItems item = new CachedItems();
             item.processDt = findProcessingDt();
             item.callableTasks = appProps.callableTasks.split(",");
+            item.chargesList = findCharges(null);
             return item;
         } catch (Exception e) {
             Logging.error(e.getMessage(), e);
@@ -61,6 +66,7 @@ public class AdminDao {
         }
         return Collections.emptyList();
     }
+
 
 
     public List<Map<String, Object>> findSMSAlertCurrencies(Integer alertCrncyId) {
@@ -97,9 +103,13 @@ public class AdminDao {
         }
     }
 
-    public List<Map<String, Object>> findCharges(Integer smsAlertCrncyId) {
+    public List<AlertCharge> findCharges(Integer smsAlertCrncyId) {
         try {
-            return jdbcTemplate.query("SELECT * from SMS_CHARGES", new BeanPropertyRowMapper(Map.class), smsAlertCrncyId);
+            if (smsAlertCrncyId == null) {
+                return jdbcTemplate.query("SELECT * FROM SMS_CHARGES", new BeanPropertyRowMapper(AlertCharge.class));
+            } else {
+                return jdbcTemplate.query("SELECT * FROM SMS_CHARGES WHERE SMS_ALERT_CRNCY_ID = ?", new BeanPropertyRowMapper(AlertCharge.class), smsAlertCrncyId);
+            }
         } catch (Exception e) {
             Logging.error(e.getMessage(), e);
         }

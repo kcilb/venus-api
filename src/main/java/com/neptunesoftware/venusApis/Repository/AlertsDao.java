@@ -1,10 +1,7 @@
 package com.neptunesoftware.venusApis.Repository;
 
 import com.neptunesoftware.venusApis.Beans.AppProps;
-import com.neptunesoftware.venusApis.Models.CachedItems;
-import com.neptunesoftware.venusApis.Models.SMS;
-import com.neptunesoftware.venusApis.Models.TrxnSmsList;
-import com.neptunesoftware.venusApis.Models.Update;
+import com.neptunesoftware.venusApis.Models.*;
 import com.neptunesoftware.venusApis.Util.Logging;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -13,6 +10,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.*;
 
 
@@ -55,6 +55,30 @@ public class AlertsDao {
                     "Last retrieved transaction alert id: " + lastMsgId);
         }
         return tranList;
+    }
+
+    public int getTotalRecords(String resultSetView) {
+        try {
+            return jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM " + resultSetView,
+                    Integer.class
+            );
+        } catch (EmptyResultDataAccessException e) {
+            throw e;
+        }
+    }
+
+    public List<AlertRequest> findPendingCharges(int pageNo, int pageSize, String resultSetView) {
+        try {
+            int pageNumber = (pageNo - 1) * pageSize;
+            int offset = pageSize;
+            String sql = "SELECT * FROM " + resultSetView + " ORDER BY ACCT_NO OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+            return jdbcTemplate.query(sql,
+                    new BeanPropertyRowMapper<>(AlertRequest.class), pageNumber, offset
+            );
+        } catch (EmptyResultDataAccessException e) {
+            throw e;
+        }
     }
 
     private Optional<Map<String, Object>> getAlertCount(String acctNo) {
