@@ -167,19 +167,13 @@ public class ChargeService {
     }
 
     private void handleInsufficientFunds(AlertRequest chargeData) throws SQLException {
-//        PreparedStatement updateScript = con.prepareStatement(
-//                "update SMS_COUNT set charge_mode='Tiered', chrge_status=?, sms_count=?, charge_amount=?, tran_date=?, "
-//                        + "error_reason=? where acct_no =? and sms_count=? and log_date=?");
-//
-//        updateScript.setString(1, "N");
-//        updateScript.setInt(2, chargeData.getSmsCount());
-//        updateScript.setBigDecimal(3, BigDecimal.ZERO);
-//        updateScript.setDate(4, new java.sql.Date(new Date().getTime()));
-//        updateScript.setString(5, "Insufficient Funds On Account.");
-//        updateScript.setString(6, chargeData.getAccount());
-//        updateScript.setInt(7, chargeData.getSmsCount());
-//        updateScript.setDate(8, chargeData.getLogDate());
-//        updateScript.executeUpdate();
+        try {
+            alertsDao.updateSMSCount(chargeData.getAccount(), "Insufficient Funds On Account.",
+                    "N", null, chargeData.getSmsCount(), chargeData.getLogDate());
+        } catch (Exception e) {
+            Logging.info("Error updating insufficient balance account SMS count");
+            Logging.info(e.getMessage(), e);
+        }
     }
 
     private void processSingleCharge(AlertRequest chargeData) {
@@ -253,35 +247,35 @@ public class ChargeService {
 
 
     private boolean attemptChargePostingWithRetry(AlertRequest chargeData) throws SQLException {
-//        int attempts = 0;
-//        while (attempts < MAX_RETRIES) {
-//            try {
-//                boolean bankPosted = postCharge("Bank", chargeData);
-//                boolean taxPosted = bankPosted && postCharge("Tax", chargeData);
-//                boolean vendorPosted = taxPosted && postCharge("Vendor", chargeData);
-//
-//                if (vendorPosted) {
-//                    updateChargeStatus(con, chargeData, "C", "Success");
-//                    return true;
-//                } else {
-//                    logFailedCharge(con, chargeData);
-//                    return false;
-//                }
-//            } catch (Exception e) {
-//                attempts++;
-//                Logging.warn(String.format(
-//                        "Attempt %d failed for %s: %s",
-//                        attempts, chargeData.getAccount(), e.getMessage()));
-//
-//                if (attempts < MAX_RETRIES) {
-//                    try {
-//                        Thread.sleep(RETRY_DELAY_MS * attempts);
-//                    } catch (InterruptedException ie) {
-//                        Thread.currentThread().interrupt();
-//                    }
-//                }
-//            }
-//        }
+        int attempts = 0;
+        while (attempts < MAX_RETRIES) {
+            try {
+                boolean bankPosted = postCharge("Bank", chargeData);
+                boolean taxPosted = bankPosted && postCharge("Tax", chargeData);
+                boolean vendorPosted = taxPosted && postCharge("Vendor", chargeData);
+
+                if (vendorPosted) {
+                    updateChargeStatus(chargeData, "C", "Success");
+                    return true;
+                } else {
+                    //logFailedCharge(chargeData);
+                    return false;
+                }
+            } catch (Exception e) {
+                attempts++;
+                Logging.warn(String.format(
+                        "Attempt %d failed for %s: %s",
+                        attempts, chargeData.getAccount(), e.getMessage()));
+
+                if (attempts < MAX_RETRIES) {
+                    try {
+                        Thread.sleep(RETRY_DELAY_MS * attempts);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }
 
         return false;
     }
@@ -443,19 +437,12 @@ public class ChargeService {
     }
 
 
-    private void updateChargeStatus(Connection con, AlertRequest chargeData, String status, String reason) throws SQLException {
-        String sql = "update SMS_COUNT set charge_mode='Tiered', chrge_status=?, sms_count=?, charge_amount=?, " +
-                "tran_date=?, error_reason=? where acct_no =? and sms_count=? and log_date=?";
-        try (PreparedStatement stmt = con.prepareStatement(sql)) {
-            stmt.setString(1, status);
-            stmt.setInt(2, "C".equals(status) ? 0 : chargeData.getSmsCount());
-            stmt.setBigDecimal(3, "C".equals(status) ? chargeData.getChargeAmount() : BigDecimal.ZERO);
-            stmt.setDate(4, new java.sql.Date(new Date().getTime()));
-            stmt.setString(5, reason);
-            stmt.setString(6, chargeData.getAccount());
-            stmt.setInt(7, chargeData.getSmsCount());
-            stmt.setDate(8, new java.sql.Date(chargeData.getLogDate().getTime()));
-            stmt.executeUpdate();
+    private void updateChargeStatus(AlertRequest chargeData, String status, String reason) throws SQLException {
+        try {
+            alertsDao.updateSMSCount(chargeData.getAccount(), reason, status, chargeData.getChargeAmount(),
+                    chargeData.getSmsCount(), new java.sql.Date(chargeData.getLogDate().getTime()));
+        } catch (Exception ex) {
+            Logging.info("Failed to update charge status");
         }
     }
 

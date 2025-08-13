@@ -10,7 +10,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
@@ -126,6 +128,29 @@ public class AlertsDao {
             Logging.info(
                     "updateAccountStats account number: " + acctNo
                             + " last sent out alerts count " + msgCount);
+        }
+    }
+
+    public void updateSMSCount(String acctNo, String message, String status
+            , BigDecimal chargeAmount, int smsCount, java.sql.Date logDate) {
+        try {
+            String sql = "update SMS_COUNT set charge_mode='Tiered', chrge_status=?, sms_count=?, charge_amount=?, tran_date=?, " +
+                    "error_reason=? where acct_no =? and sms_count=? and log_date=?";
+
+            jdbcTemplate.update(sql,
+                    status,
+                    smsCount,
+                    "C".equals(status) ? 0 : smsCount,
+                    "C".equals(status) ? chargeAmount : BigDecimal.ZERO,
+                    new java.sql.Date(new Date().getTime()),
+                    message,
+                    acctNo,
+                    smsCount,
+                    logDate
+            );
+        } catch (Exception e) {
+            Logging.error(e.getMessage(), e);
+            throw e;
         }
     }
 
