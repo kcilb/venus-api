@@ -38,29 +38,23 @@ public class ReportService {
         try (FileOutputStream fos = new FileOutputStream("pdf\\SMS_Charge_Report.pdf")) {
             PdfWriter writer = PdfWriter.getInstance(document, fos);
 
-            // Add metadata
             document.addTitle("SMS Charge Routine Report");
             document.addAuthor("venus");
             document.addCreator("venus");
 
             document.open();
 
-            // Add header with logo (replace with your actual logo path)
             addHeader(document);
 
-            // Add title
             Paragraph title = new Paragraph("MONTHLY SMS CHARGE REPORT", TITLE_FONT);
             title.setAlignment(Element.ALIGN_CENTER);
             title.setSpacingAfter(20);
             document.add(title);
 
-            // Add report summary
             addSummarySection(document, outcome);
 
-            // Add detailed statistics table
             addStatisticsTable(document, outcome);
 
-            // Add footer
             addFooter(writer, document);
 
             document.close();
@@ -99,13 +93,11 @@ public class ReportService {
         summary.setSpacingAfter(10);
         document.add(summary);
 
-        // Extract first line for summary
         String[] lines = outcome.split("\r\n");
         Paragraph summaryText = new Paragraph(lines[0], NORMAL_FONT);
         summaryText.setSpacingAfter(15);
         document.add(summaryText);
 
-        // Add horizontal line
         Paragraph line = new Paragraph();
         line.add(new Chunk(new LineSeparator(0.5f, 100, BaseColor.GRAY, Element.ALIGN_CENTER, -1)));
         document.add(line);
@@ -120,7 +112,6 @@ public class ReportService {
         table.setSpacingBefore(10);
         table.setSpacingAfter(20);
 
-        // Table header
         PdfPCell headerCell = new PdfPCell(new Phrase("DESCRIPTION", HEADER_FONT));
         headerCell.setBackgroundColor(HEADER_BG_COLOR);
         headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -131,7 +122,6 @@ public class ReportService {
         headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
         table.addCell(headerCell);
 
-        // Table content
         for (int i = 1; i < lines.length; i++) {
             String[] parts = lines[i].split(" ", 2);
             if (parts.length == 2) {

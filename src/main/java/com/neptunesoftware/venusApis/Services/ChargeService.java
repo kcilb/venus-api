@@ -523,7 +523,7 @@ public class ChargeService {
     private static final Properties xapiCodes = new Properties();
 
     private static void readXapiCodes() {
-        try (FileInputStream fis = new FileInputStream("xapicodes.xml")) {
+        try (FileInputStream fis = new FileInputStream("conf\\xapicodes.xml")) {
             xapiCodes.loadFromXML(fis);
         } catch (IOException e) {
             Logging.error(e);
