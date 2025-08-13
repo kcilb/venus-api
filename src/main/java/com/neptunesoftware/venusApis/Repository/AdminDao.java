@@ -54,19 +54,17 @@ public class AdminDao {
         }
     }
 
-    private List<Map<String, Object>> findInstitutionCurrencies() {
+    public List<Map<String, Object>> findInstitutionCurrencies() {
         try {
-            List<Map<String, Object>> result = jdbcTemplate.query(
-                    "SELECT CRNCY_ID,CRNCY_CD, CRNCY_NM FROM " + appProps.coreSchema + ".CURRENCY WHERE REC_ST = 'A'"
+            return jdbcTemplate.query(
+                    "SELECT CRNCY_ID,CRNCY_CD, CRNCY_NM FROM " + appProps.coreSchema + ".CURRENCY WHERE REC_ST = 'A'" +
+                            "AND CRNCY_ID NOT IN (SELECT CRNCY_ID FROM SMS_ALERT_CRNCY)"
                     , new BeanPropertyRowMapper(Map.class));
-            return result;
-
         } catch (Exception e) {
             Logging.error(e.getMessage(), e);
+            throw e;
         }
-        return Collections.emptyList();
     }
-
 
 
     public List<Map<String, Object>> findSMSAlertCurrencies(Integer alertCrncyId) {

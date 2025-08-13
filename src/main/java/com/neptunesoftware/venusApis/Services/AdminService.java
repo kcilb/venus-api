@@ -21,6 +21,19 @@ public class AdminService {
         this.adminDao = adminDao;
     }
 
+    public ApiResponse<List<Map<String, Object>>> findInstitutionCurrencies() {
+        try {
+            List<Map<String, Object>> list = adminDao.findInstitutionCurrencies();
+            return ApiResponse.<List<Map<String, Object>>>builder().data(list)
+                    .response(list.isEmpty() ? StaticRefs.noRecords() : StaticRefs.success())
+                    .build();
+        } catch (Exception e) {
+            Logging.info(e.getMessage());
+            return ApiResponse.<List<Map<String, Object>>>builder().data(null)
+                    .response(StaticRefs.serverError()).build();
+        }
+    }
+
     public ApiResponse<List<Map<String, Object>>> findSMSAlertCurrencies(Integer alertCrncyId) {
         try {
             List<Map<String, Object>> list = adminDao.findSMSAlertCurrencies(alertCrncyId);

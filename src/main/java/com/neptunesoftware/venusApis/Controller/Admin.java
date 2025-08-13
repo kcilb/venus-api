@@ -19,6 +19,11 @@ public class Admin {
         this.adminService = adminService;
     }
 
+    @PostMapping(value = "findInstitutionCurrencies", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> findInstitutionCurrencies() {
+        return ResponseEntity.ok(adminService.findInstitutionCurrencies());
+    }
+
     @PostMapping(value = "findSMSAlertCurrencies", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> findSMSAlertCurrencies(@RequestBody Integer id) {
         return ResponseEntity.ok(adminService.findSMSAlertCurrencies(id));
