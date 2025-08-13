@@ -35,7 +35,10 @@ public class ReportService {
 
         Document document = new Document(PageSize.A4);
 
-        try (FileOutputStream fos = new FileOutputStream("pdf\\SMS_Charge_Report.pdf")) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH_mm_ss.A"));
+        String fileName = "SMS_Charge_Report_" + timestamp + ".pdf";
+        String filePath = "pdf\\" + fileName.toUpperCase();
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
             PdfWriter writer = PdfWriter.getInstance(document, fos);
 
             document.addTitle("SMS Charge Routine Report");
@@ -58,11 +61,7 @@ public class ReportService {
             addFooter(writer, document);
 
             document.close();
-        } catch (DocumentException e) {
-            throw new RuntimeException(e);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (DocumentException | IOException e) {
             throw new RuntimeException(e);
         }
     }

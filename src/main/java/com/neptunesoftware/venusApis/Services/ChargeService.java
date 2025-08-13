@@ -545,16 +545,8 @@ public class ChargeService {
             Logging.error("Failed to log final results", e);
         }
 
-        // Log to console
-        String outcome = "The Monthly " + (isAutoRecoveryInitiated ? "auto recovery" : "") +
-                " SMS Charge routine has completed.\r\n" + posted.get() + " accounts charged successfully\r\n" +
-                failed.get() + " accounts failed from system error\r\n" + lowFunds.get() +
-                " failed as a result of insufficient funds\r\n" + syserr.get() +
-                " failed as a result of a failure to retrieve account balance on account\r\n" +
-                processedRecords.get() + " Accounts were processed in total\r\n" + total +
-                " Accounts were retrieved in total!";
-
-        Logging.info(outcome);
+        ReportService.generateChargeReport(isAutoRecoveryInitiated,posted.get(),failed.get()
+                ,lowFunds.get(),syserr.get(),processedRecords.get(),total);
 
         Logging.info("Method Exit: ChargePosting.run");
     }
