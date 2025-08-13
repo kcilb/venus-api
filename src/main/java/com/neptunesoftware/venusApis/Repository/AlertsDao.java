@@ -155,4 +155,29 @@ public class AlertsDao {
     }
 
 
+    public void logFailedSplit(AlertRequest chargeData){
+        String sql = "INSERT INTO SMSBANK.FAILED_SPLIT VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, ?, ?, SYSDATE)";
+
+        jdbcTemplate.update(sql,
+                chargeData.getAccount(),
+                chargeData.getBankCharge(),
+                chargeData.getVendorCharge(),
+                chargeData.getTaxCharge(),
+                "Y",
+                "N",
+                "Y",
+                chargeData.getBankChargeGL(),
+                chargeData.getVendorChargeGL(),
+                chargeData.getTaxChargeGL(),
+                chargeData.getSmsCount(),
+                "P",
+                chargeData.getChargeDesc(),
+                chargeData.getVendorCharge(),
+                new java.sql.Date(chargeData.getLogDate().getTime()),
+                chargeData.getTxnCurrency(),
+                chargeData.getTxnReference()
+        );
+    }
+
+
 }

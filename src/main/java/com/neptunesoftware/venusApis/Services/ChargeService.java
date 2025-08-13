@@ -258,7 +258,7 @@ public class ChargeService {
                     updateChargeStatus(chargeData, "C", "Success");
                     return true;
                 } else {
-                    //logFailedCharge(chargeData);
+                    logFailedCharge(chargeData);
                     return false;
                 }
             } catch (Exception e) {
@@ -446,27 +446,13 @@ public class ChargeService {
         }
     }
 
-    private void logFailedCharge(Connection con, AlertRequest chargeData) throws SQLException {
-        String sql = "INSERT INTO SMSBANK.FAILED_SPLIT VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, ?, ?, SYSDATE)";
-        try (PreparedStatement stmt = con.prepareStatement(sql)) {
-            stmt.setString(1, chargeData.getAccount());
-            stmt.setBigDecimal(2, chargeData.getBankCharge());
-            stmt.setBigDecimal(3, chargeData.getVendorCharge());
-            stmt.setBigDecimal(4, chargeData.getTaxCharge());
-            stmt.setString(5, "Y");
-            stmt.setString(6, "N");
-            stmt.setString(7, "Y");
-            stmt.setString(8, chargeData.getBankChargeGL());
-            stmt.setString(9, chargeData.getVendorChargeGL());
-            stmt.setString(10, chargeData.getTaxChargeGL());
-            stmt.setInt(11, chargeData.getSmsCount());
-            stmt.setString(12, "P");
-            stmt.setString(13, chargeData.getChargeDesc());
-            stmt.setBigDecimal(14, chargeData.getVendorCharge());
-            stmt.setDate(15, new java.sql.Date(chargeData.getLogDate().getTime()));
-            stmt.setString(16, chargeData.getTxnCurrency());
-            stmt.setString(17, chargeData.getTxnReference());
-            stmt.executeUpdate();
+    private void logFailedCharge(AlertRequest chargeData) {
+
+        try {
+            alertsDao.logFailedSplit(chargeData);
+        } catch (Exception ex) {
+            Logging.info("Failed to log failed split");
+            Logging.error(ex);
         }
     }
 
