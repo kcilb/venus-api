@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -37,6 +36,7 @@ import com.neptunesoftware.supernova.ws.server.transaction.TransactionsWebServic
 import com.neptunesoftware.supernova.ws.server.transaction.TransactionsWebServiceStub;
 import com.neptunesoftware.supernova.ws.server.txnprocess.TxnProcessWebServiceEndPointPort;
 import com.neptunesoftware.supernova.ws.server.txnprocess.TxnProcessWebServiceStub;
+
 
 @Service
 public class ChargeService {
@@ -71,6 +71,8 @@ public class ChargeService {
 
     //generate pdf report and return to front-end
     public ApiResponse<String> processSMSCharges(String resultSetView, boolean isAutoRecoveryInitiated) {
+        Logging.info("Method Entry: ChargePosting.run");
+        long startTime = System.currentTimeMillis();
         try {
             // Initialize core connection
             loadCoreConnection();
@@ -85,7 +87,11 @@ public class ChargeService {
             processAllCharges(resultSetView);
 
         } catch (Exception e) {
+            Logging.error("Processing failed", e);
             Logging.info(e.getMessage(), e);
+        } finally {
+            // Log final results
+            logResults(startTime, isAutoRecoveryInitiated);
         }
         return null;
     }
@@ -255,7 +261,7 @@ public class ChargeService {
                 boolean vendorPosted = taxPosted && postCharge("Vendor", chargeData);
 
                 if (vendorPosted) {
-                    updateChargeStatus(chargeData, "C", "Success");
+                    updateChargeStatus(chargeData);
                     return true;
                 } else {
                     logFailedCharge(chargeData);
@@ -437,12 +443,13 @@ public class ChargeService {
     }
 
 
-    private void updateChargeStatus(AlertRequest chargeData, String status, String reason) throws SQLException {
+    private void updateChargeStatus(AlertRequest chargeData) {
         try {
-            alertsDao.updateSMSCount(chargeData.getAccount(), reason, status, chargeData.getChargeAmount(),
+            alertsDao.updateSMSCount(chargeData.getAccount(), "Success", "C", chargeData.getChargeAmount(),
                     chargeData.getSmsCount(), new java.sql.Date(chargeData.getLogDate().getTime()));
         } catch (Exception ex) {
             Logging.info("Failed to update charge status");
+            throw ex;
         }
     }
 
@@ -453,6 +460,7 @@ public class ChargeService {
         } catch (Exception ex) {
             Logging.info("Failed to log failed split");
             Logging.error(ex);
+            throw ex;
         }
     }
 
@@ -466,14 +474,6 @@ public class ChargeService {
 
     private void loadCharges() {
         sms_charges = cacheService.getCachedItem().chargesList;
-
-//        for (AlertCharge charge : charges) {
-//            sms_charges.put(Long.parseLong(String.valueOf(charge.getMax_value())),
-//                    new AlertCharge(charge.getMin_value(),
-//                            charge.getMax_value(), charge.getVendor_charge(),
-//                            charge.getBank_charge(), charge.getTotal_charge(),
-//                            charge.getSmsAlertCrncyId()));
-//        }
     }
 
     private void getTotalRecords(String resultSetView) {
@@ -488,7 +488,7 @@ public class ChargeService {
 
     private void loadEndpointFunctions() {
         readXapiCodes();
-        rubiApi = appProps.getRubiApi();
+       // rubiApi = appProps.getRubiApi();
         endpointFunctions.put("account-web-service", "AccountWebServiceEndPointPort?wsdl");
         endpointFunctions.put("transaction-web-service", "TransactionsWebServiceEndPointPort?wsdl");
         endpointFunctions.put("txnprocess-web-service", "TxnProcessWebServiceEndPointPort?wsdl");
@@ -501,15 +501,15 @@ public class ChargeService {
             Logging.info("Method Entry : AlertCharger.initCoreConnection");
 
             accountEndPoint = new AccountWebServiceEndPointPort(
-                    new URL(rubiApi + endpointFunctions.get("account-web-service")))
+                    new URL("http://10.0.1.13:9003/supernovaws/" + endpointFunctions.get("account-web-service")))
                     .getAccountWebServiceStubPort();
 
             transactionsEndPoint = new TransactionsWebServiceEndPointPort(
-                    new URL(rubiApi + endpointFunctions.get("transaction-web-service")))
+                    new URL("http://10.0.1.13:9003/supernovaws/" + endpointFunctions.get("transaction-web-service")))
                     .getTransactionsWebServiceStubPort();
 
             txnWebEndPoint = new TxnProcessWebServiceEndPointPort(
-                    new URL(rubiApi + endpointFunctions.get("txnprocess-web-service")))
+                    new URL("http://10.0.1.13:9003/supernovaws/" + endpointFunctions.get("txnprocess-web-service")))
                     .getTxnProcessWebServiceStubPort();
 
             Logging.info("Method Exit : AlertCharger.initCoreConnection");
@@ -532,6 +532,31 @@ public class ChargeService {
 
     public static String getErrorDesc(String errorCode) {
         return xapiCodes.getProperty(errorCode, "Undefined error occured");
+    }
+
+    private void logResults(long startTime, boolean isAutoRecoveryInitiated) {
+        long totalTime = System.currentTimeMillis() - startTime;
+        Logging.info("Total Time taken in milliseconds: " + totalTime);
+
+        // Log final results to database
+        try {
+            alertsDao.logResults(total, lowFunds.get(), posted.get(), failed.get(), totalCharge.get());
+        } catch (Exception e) {
+            Logging.error("Failed to log final results", e);
+        }
+
+        // Log to console
+        String outcome = "The Monthly " + (isAutoRecoveryInitiated ? "auto recovery" : "") +
+                " SMS Charge routine has completed.\r\n" + posted.get() + " accounts charged successfully\r\n" +
+                failed.get() + " accounts failed from system error\r\n" + lowFunds.get() +
+                " failed as a result of insufficient funds\r\n" + syserr.get() +
+                " failed as a result of a failure to retrieve account balance on account\r\n" +
+                processedRecords.get() + " Accounts were processed in total\r\n" + total +
+                " Accounts were retrieved in total!";
+
+        Logging.info(outcome);
+
+        Logging.info("Method Exit: ChargePosting.run");
     }
 
 
