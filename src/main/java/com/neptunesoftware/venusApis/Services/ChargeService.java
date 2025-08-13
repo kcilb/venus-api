@@ -58,7 +58,7 @@ public class ChargeService {
     private final AtomicInteger lowFunds = new AtomicInteger(0);
     private final AtomicInteger syserr = new AtomicInteger(0);
     private final AtomicReference<BigDecimal> totalCharge = new AtomicReference<>(BigDecimal.ZERO);
-    private Map<Long, AlertCharge> sms_charges = new ConcurrentHashMap<>();
+    private static List<AlertCharge> sms_charges = Collections.emptyList();
     private int total;
 
     public ChargeService(AppProps appProps, ItemCacheService cacheService, AlertsDao alertsDao) {
@@ -127,28 +127,43 @@ public class ChargeService {
 
     private List<AlertRequest> fetchBatch(int pageNumber, String resultSetView) throws SQLException {
 
-        List<AlertRequest> batch = new ArrayList<>();
-        List<AlertRequest> alertRequests = alertsDao.findPendingCharges(pageNumber, PAGE_SIZE, resultSetView);
+        List<AlertRequest> batch = Collections.emptyList();
 
-        // check amount and currency
-//            while (rs.next()) {
-//                AlertCharge charge = computeCharge(rs.getInt("sms_count"));
-//                batch.add(buildAlertRequest(rs, charge));
-//            }
+        //sms alert currency id has to exist in the smsbank table
+        // comes with the iso code/currency attached to the account
+        List<AlertRequest> alertRequests = alertsDao.findPendingCharges(pageNumber, PAGE_SIZE, resultSetView);
+        if (alertRequests.isEmpty())
+            return Collections.emptyList();
+
+        for (AlertRequest alertRequest : alertRequests) {
+            // filter all charges attached to the currency
+            sms_charges = sms_charges.stream().filter(f -> f.getSmsAlertCrncyId() == alertRequest.getSmsAlertCrncyId()).toList();
+            AlertCharge charge = computeCharge(alertRequest.getSmsCount());
+            batch.add(buildAlertRequest(alertRequest, charge));
+        }
         return batch;
     }
 
-    private AlertRequest buildAlertRequest(ResultSet entry, AlertCharge charge) throws SQLException {
-        return new AlertRequest(entry.getString("acct_no"), null, null,
-                String.valueOf(System.currentTimeMillis()), entry.getString("crncy_cd_iso"), "SMS", null,
-                entry.getString("acct_no"), null,
-                unmaskGLAccount(entry.getString("GL_PREFIX_CD"), appProps.bankChargeGl),
-                unmaskGLAccount(entry.getString("GL_PREFIX_CD"), appProps.taxChargeGl),
-                unmaskGLAccount(entry.getString("GL_PREFIX_CD"), appProps.vendorChargeGl), null, null,
-                null, null, format.format(entry.getDate("log_date")) + " Monthly SMS Charge",
-                entry.getString("acct_no"), null, null, charge.getTotal_charge(), charge.getBank_charge(),
-                charge.getTax_charge(), charge.getVendor_charge(), 9L, entry.getInt("sms_count"), false,
-                false, false, entry.getInt("sms_count"), entry.getDate("log_date"));
+    private AlertCharge computeCharge(int sms_count) {
+        return sms_charges.stream()
+                .filter(c -> sms_count >= c.getMin_value() &&
+                        sms_count <= c.getMax_value())
+                .findFirst()
+                .orElse(null);
+    }
+
+    private AlertRequest buildAlertRequest(AlertRequest alertRequest, AlertCharge charge) throws SQLException {
+        return new AlertRequest(alertRequest.getAccount(), null, null,
+                String.valueOf(System.currentTimeMillis()), alertRequest.getTxnCurrency(), "SMS", null,
+                alertRequest.getAccount(), null,
+                unmaskGLAccount(alertRequest.getGlPrefixCd(), appProps.bankChargeGl),
+                unmaskGLAccount(alertRequest.getGlPrefixCd(), appProps.taxChargeGl),
+                unmaskGLAccount(alertRequest.getGlPrefixCd(), appProps.vendorChargeGl), null, null,
+                null, null, format.format(alertRequest.getLogDate()) + " Monthly SMS Charge",
+                alertRequest.getAccount(), null, null, charge.getTotal_charge(), charge.getBank_charge(),
+                charge.getTax_charge(), charge.getVendor_charge(), 9L, alertRequest.getSmsCount(), false,
+                false, false, alertRequest.getSmsCount(), alertRequest.getLogDate(),
+                alertRequest.getSmsAlertCrncyId());
     }
 
     private void handleInsufficientFunds(AlertRequest chargeData) throws SQLException {
@@ -427,16 +442,6 @@ public class ChargeService {
         }
     }
 
-    private AlertCharge computeCharge(int sms_count) {
-        AlertCharge charge = null;
-        for (Map.Entry<Long, AlertCharge> each : sms_charges.entrySet()) {
-            if (sms_count <= each.getKey()) {
-                charge = each.getValue();
-                break;
-            }
-        }
-        return charge;
-    }
 
     private void updateChargeStatus(Connection con, AlertRequest chargeData, String status, String reason) throws SQLException {
         String sql = "update SMS_COUNT set charge_mode='Tiered', chrge_status=?, sms_count=?, charge_amount=?, " +
@@ -487,17 +492,15 @@ public class ChargeService {
     }
 
     private void loadCharges() {
-        List<AlertCharge> charges = cacheService.getCachedItem().chargesList;
-        if (charges.isEmpty())
-            return;
+        sms_charges = cacheService.getCachedItem().chargesList;
 
-        for (AlertCharge charge : charges) {
-            sms_charges.put(Long.parseLong(String.valueOf(charge.getMax_value())),
-                    new AlertCharge(charge.getMin_value(),
-                            charge.getMax_value(), charge.getVendor_charge(),
-                            charge.getBank_charge(), charge.getTotal_charge(),
-                            charge.getSmsAlertCrncyId()));
-        }
+//        for (AlertCharge charge : charges) {
+//            sms_charges.put(Long.parseLong(String.valueOf(charge.getMax_value())),
+//                    new AlertCharge(charge.getMin_value(),
+//                            charge.getMax_value(), charge.getVendor_charge(),
+//                            charge.getBank_charge(), charge.getTotal_charge(),
+//                            charge.getSmsAlertCrncyId()));
+//        }
     }
 
     private void getTotalRecords(String resultSetView) {
