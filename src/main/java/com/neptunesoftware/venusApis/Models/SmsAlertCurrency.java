@@ -1,12 +1,26 @@
 package com.neptunesoftware.venusApis.Models;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
 public class SmsAlertCurrency implements Serializable {
+    // Getters and Setters
+    @Setter
+    @Getter
     private Object smsAlertCrncyId; // Can be Integer or String
+    @Setter
+    @Getter
     private String crncyIso;
+    @Setter
+    @Getter
     private int crncyId;
+    @Getter
+    @Setter
     private Status status;
+    private String crncyNm;
+
 
     // Enum for status values
     public enum Status {
@@ -20,44 +34,12 @@ public class SmsAlertCurrency implements Serializable {
     public SmsAlertCurrency() {
     }
 
-    public SmsAlertCurrency(Object smsAlertCrncyId, String crncyIso, int crncyId, Status status) {
+    public SmsAlertCurrency(Object smsAlertCrncyId, String crncyIso, int crncyId, Status status, String crncyNm) {
         this.smsAlertCrncyId = smsAlertCrncyId;
         this.crncyIso = crncyIso;
         this.crncyId = crncyId;
         this.status = status;
-    }
-
-    // Getters and Setters
-    public Object getSmsAlertCrncyId() {
-        return smsAlertCrncyId;
-    }
-
-    public void setSmsAlertCrncyId(Object smsAlertCrncyId) {
-        this.smsAlertCrncyId = smsAlertCrncyId;
-    }
-
-    public String getCrncyIso() {
-        return crncyIso;
-    }
-
-    public void setCrncyIso(String crncyIso) {
-        this.crncyIso = crncyIso;
-    }
-
-    public int getCrncyId() {
-        return crncyId;
-    }
-
-    public void setCrncyId(int crncyId) {
-        this.crncyId = crncyId;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
+        this.crncyNm = crncyNm;
     }
 
     // toString method
