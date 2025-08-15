@@ -19,6 +19,9 @@ public class SmsAlertCurrency implements Serializable {
     @Getter
     @Setter
     private Status status;
+
+    @Getter
+    @Setter
     private String crncyNm;
 
 
