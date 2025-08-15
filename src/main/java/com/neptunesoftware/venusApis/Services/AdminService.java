@@ -3,6 +3,7 @@ package com.neptunesoftware.venusApis.Services;
 import com.neptunesoftware.venusApis.Models.AlertCharge;
 import com.neptunesoftware.venusApis.Models.ApiResponse;
 import com.neptunesoftware.venusApis.Models.Response;
+import com.neptunesoftware.venusApis.Models.SmsAlertCurrency;
 import com.neptunesoftware.venusApis.Repository.AdminDao;
 import com.neptunesoftware.venusApis.Util.Logging;
 import com.neptunesoftware.venusApis.Util.StaticRefs;
@@ -34,28 +35,28 @@ public class AdminService {
         }
     }
 
-    public ApiResponse<List<Map<String, Object>>> findSMSAlertCurrencies(Integer alertCrncyId) {
+    public ApiResponse<List<SmsAlertCurrency>> findSMSAlertCurrencies(Integer alertCrncyId) {
         try {
-            List<Map<String, Object>> list = adminDao.findSMSAlertCurrencies(alertCrncyId);
+            List<SmsAlertCurrency> list = adminDao.findSMSAlertCurrencies(alertCrncyId);
             if (list.isEmpty()) {
-                return ApiResponse.<List<Map<String, Object>>>builder().data(null)
+                return ApiResponse.<List<SmsAlertCurrency>>builder().data(null)
                         .response(StaticRefs.noRecords()).build();
             } else {
-                return ApiResponse.<List<Map<String, Object>>>builder().data(list).build();
+                return ApiResponse.<List<SmsAlertCurrency>>builder().data(list).build();
             }
         } catch (Exception e) {
             Logging.info(e.getMessage());
-            return ApiResponse.<List<Map<String, Object>>>builder().data(null)
+            return ApiResponse.<List<SmsAlertCurrency>>builder().data(null)
                     .response(StaticRefs.serverError()).build();
         }
     }
 
-    public Response maintainSMSAlertCurrency(Map<String, Object> map) {
+    public Response maintainSMSAlertCurrency(SmsAlertCurrency request) {
         try {
-            if (map.get("sms_alert_crncy_id") == null) {
-                adminDao.createSMSAlertCurrency(map);
+            if (request.getSmsAlertCrncyId() == null) {
+                adminDao.createSMSAlertCurrency(request);
             } else
-                adminDao.updateSMSAlertCurrency(map);
+                adminDao.updateSMSAlertCurrency(request);
 
             return StaticRefs.success();
         } catch (Exception e) {

@@ -1,5 +1,6 @@
 package com.neptunesoftware.venusApis.Controller;
 
+import com.neptunesoftware.venusApis.Models.SmsAlertCurrency;
 import com.neptunesoftware.venusApis.Services.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +31,7 @@ public class Admin {
     }
 
     @PostMapping(value = "maintainSMSAlertCurrency", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> maintainSMSAlertCurrency(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> maintainSMSAlertCurrency(@RequestBody SmsAlertCurrency request) {
         return ResponseEntity.ok(adminService.maintainSMSAlertCurrency(request));
     }
 

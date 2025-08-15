@@ -4,6 +4,7 @@ package com.neptunesoftware.venusApis.Repository;
 import com.neptunesoftware.venusApis.Beans.AppProps;
 import com.neptunesoftware.venusApis.Models.AlertCharge;
 import com.neptunesoftware.venusApis.Models.CachedItems;
+import com.neptunesoftware.venusApis.Models.SmsAlertCurrency;
 import com.neptunesoftware.venusApis.Util.Logging;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -67,13 +68,13 @@ public class AdminDao {
     }
 
 
-    public List<Map<String, Object>> findSMSAlertCurrencies(Integer alertCrncyId) {
+    public List<SmsAlertCurrency> findSMSAlertCurrencies(Integer alertCrncyId) {
         try {
             return alertCrncyId == null ? jdbcTemplate.query(
                     "SELECT * FROM SMS_ALERT_CRNCY WHERE STATUS = 'A'"
                     , new BeanPropertyRowMapper(Map.class)) : jdbcTemplate.query(
                     "SELECT * FROM SMS_ALERT_CRNCY WHERE  SMS_ALERT_CRNCY_ID = ?"
-                    , new BeanPropertyRowMapper(Map.class), alertCrncyId);
+                    , new BeanPropertyRowMapper(SmsAlertCurrency.class), alertCrncyId);
 
         } catch (Exception e) {
             Logging.error(e.getMessage(), e);
@@ -81,20 +82,20 @@ public class AdminDao {
         return Collections.emptyList();
     }
 
-    public void createSMSAlertCurrency(Map<String, Object> map) {
+    public void createSMSAlertCurrency(SmsAlertCurrency request) {
         try {
             jdbcTemplate.update("INSERT INTO SMS_ALERT_CRNCY(CRNCY_ISO,CRNCY_ID,STATUS) VALUE(?,?,?)",
-                    map.get("crncy_iso"), map.get("crncy_id"), map.get("status"));
+                    request.getCrncyIso(), request.getCrncyId(), request.getStatus());
         } catch (Exception e) {
             Logging.error(e.getMessage(), e);
             throw e;
         }
     }
 
-    public void updateSMSAlertCurrency(Map<String, Object> map) {
+    public void updateSMSAlertCurrency(SmsAlertCurrency request) {
         try {
             jdbcTemplate.update("UPDATE SMS_ALERT_CRNCY SET STATUS = ? WHERE SMS_ALERT_CRNCY_ID = ?",
-                    map.get("status"), map.get("sms_alert_crncy_id"));
+                    request.getStatus(), request.getSmsAlertCrncyId());
         } catch (Exception e) {
             Logging.error(e.getMessage(), e);
             throw e;
