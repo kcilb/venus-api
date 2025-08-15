@@ -5,54 +5,40 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
-public class SmsAlertCurrency implements Serializable {
-    // Getters and Setters
-    @Setter
-    @Getter
-    private Object smsAlertCrncyId; // Can be Integer or String
-    @Setter
-    @Getter
-    private String crncyIso;
-    @Setter
-    @Getter
-    private int crncyId;
-    @Getter
-    @Setter
-    private Status status;
+import lombok.Getter;
+import lombok.Setter;
 
-    @Getter
-    @Setter
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+
+@Getter
+@Setter
+public class SmsAlertCurrency {
+
+    private String smsAlertCrncyId;
+
+    private String crncyIso;
+
+    private Integer crncyId;
+
     private String crncyNm;
 
+    private LocalDateTime createdDate;
 
-    // Enum for status values
-    public enum Status {
-        ACTIVE,
-        INACTIVE,
-        PENDING,
-        ARCHIVED
+    private LocalDateTime modifiedDate;
+
+    private String createdBy;
+
+    private String modifiedBy;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdDate = LocalDateTime.now();
     }
 
-    // Constructors
-    public SmsAlertCurrency() {
-    }
-
-    public SmsAlertCurrency(Object smsAlertCrncyId, String crncyIso, int crncyId, Status status, String crncyNm) {
-        this.smsAlertCrncyId = smsAlertCrncyId;
-        this.crncyIso = crncyIso;
-        this.crncyId = crncyId;
-        this.status = status;
-        this.crncyNm = crncyNm;
-    }
-
-    // toString method
-    @Override
-    public String toString() {
-        return "SmsAlertCurrency{" +
-                "smsAlertCrncyId=" + smsAlertCrncyId +
-                ", crncyIso='" + crncyIso + '\'' +
-                ", crncyId=" + crncyId +
-                ", status=" + status +
-                '}';
+    @PreUpdate
+    protected void onUpdate() {
+        this.modifiedDate = LocalDateTime.now();
     }
 }
