@@ -136,7 +136,7 @@ public class AdminDao {
     public List<AlertCharge> findCharges(Integer smsAlertCrncyId) {
         try {
             if (smsAlertCrncyId == null) {
-                return jdbcTemplate.query("SELECT * FROM SMS_CHARGE_TIERS", new BeanPropertyRowMapper(AlertCharge.class));
+                return jdbcTemplate.query("SELECT * FROM SMS_CHARGE_TIERS WHERE STATUS = 'A'", new BeanPropertyRowMapper(AlertCharge.class));
             } else {
                 return jdbcTemplate.query("SELECT * FROM SMS_CHARGE_TIERS WHERE SMS_ALERT_CRNCY_ID = ?", new BeanPropertyRowMapper(AlertCharge.class), smsAlertCrncyId);
             }
