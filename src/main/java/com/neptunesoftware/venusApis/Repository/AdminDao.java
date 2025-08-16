@@ -149,9 +149,9 @@ public class AdminDao {
     public void createCharge(List<ChargeTiers> requestList) {
         try {
             jdbcTemplate.batchUpdate(
-                    "INSERT INTO SMS_CHARGE_TIERS (CHARGEDESC, TXNTYPE, MIN_VALUE, MAX_VALUE, " +
-                            "VENDOR_CHARGE, BANK_CHARGE, EXCISE_CHARGE, STATUS, MODIFIEDBY, " +
-                            "MODIFIEDDATE, SMS_ALERT_CRNCY_ID) " +
+                    "INSERT INTO SMS_CHARGE_TIERS (CHARGE_DESC, TXN_TYPE, MIN_VALUE, MAX_VALUE, " +
+                            "VENDOR_CHARGE, BANK_CHARGE, EXCISE_CHARGE, STATUS, MODIFIED_BY, " +
+                            "MODIFIED_DATE, SMS_ALERT_CRNCY_ID) " +
                             "VALUES('SMS Charge Tier', 'SMS', ?, ?, ?, ?, ?, 'A', 'SYSTEM', SYSDATE, ?)",
                     requestList,
                     requestList.size(),
@@ -186,13 +186,12 @@ public class AdminDao {
     public void removeCharge(List<ChargeTiers> requests) {
         try {
             jdbcTemplate.batchUpdate(
-                    "DELETE FROM SMS_CHARGE_TIERS WHERE ID = ? AND SMS_ALERT_CRNCY_ID = ?",
+                    "DELETE FROM SMS_CHARGE_TIERS WHERE SMS_ALERT_CRNCY_ID = ?",
                     new BatchPreparedStatementSetter() {
                         @Override
                         public void setValues(PreparedStatement ps, int i) throws SQLException {
                             ChargeTiers request = requests.get(i);
-                            ps.setLong(1, request.getId());
-                            ps.setLong(2, request.getSmsAlertCrncyId());
+                            ps.setLong(1, request.getSmsAlertCrncyId());
                         }
 
                         @Override

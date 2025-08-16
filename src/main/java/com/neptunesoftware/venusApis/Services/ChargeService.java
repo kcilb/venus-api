@@ -152,8 +152,8 @@ public class ChargeService {
 
     private AlertCharge computeCharge(int sms_count) {
         return sms_charges.stream()
-                .filter(c -> sms_count >= c.getMin_value() &&
-                        sms_count <= c.getMax_value())
+                .filter(c -> sms_count >= c.getMinValue() &&
+                        sms_count <= c.getMaxValue())
                 .findFirst()
                 .orElse(null);
     }
@@ -166,8 +166,8 @@ public class ChargeService {
                 unmaskGLAccount(alertRequest.getGlPrefixCd(), appProps.taxChargeGl),
                 unmaskGLAccount(alertRequest.getGlPrefixCd(), appProps.vendorChargeGl), null, null,
                 null, null, format.format(alertRequest.getLogDate()) + " Monthly SMS Charge",
-                alertRequest.getAccount(), null, null, charge.getTotal_charge(), charge.getBank_charge(),
-                charge.getTax_charge(), charge.getVendor_charge(), 9L, alertRequest.getSmsCount(), false,
+                alertRequest.getAccount(), null, null, charge.getTotalCharge(), charge.getBankCharge(),
+                charge.getExciseCharge(), charge.getVendorCharge(), 9L, alertRequest.getSmsCount(), false,
                 false, false, alertRequest.getSmsCount(), alertRequest.getLogDate(),
                 alertRequest.getSmsAlertCrncyId());
     }
@@ -488,7 +488,7 @@ public class ChargeService {
 
     private void loadEndpointFunctions() {
         readXapiCodes();
-       // rubiApi = appProps.getRubiApi();
+        // rubiApi = appProps.getRubiApi();
         endpointFunctions.put("account-web-service", "AccountWebServiceEndPointPort?wsdl");
         endpointFunctions.put("transaction-web-service", "TransactionsWebServiceEndPointPort?wsdl");
         endpointFunctions.put("txnprocess-web-service", "TxnProcessWebServiceEndPointPort?wsdl");
@@ -545,8 +545,8 @@ public class ChargeService {
             Logging.error("Failed to log final results", e);
         }
 
-        ReportService.generateChargeReport(isAutoRecoveryInitiated,posted.get(),failed.get()
-                ,lowFunds.get(),syserr.get(),processedRecords.get(),total);
+        ReportService.generateChargeReport(isAutoRecoveryInitiated, posted.get(), failed.get()
+                , lowFunds.get(), syserr.get(), processedRecords.get(), total);
 
         Logging.info("Method Exit: ChargePosting.run");
     }

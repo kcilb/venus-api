@@ -4,67 +4,74 @@ import java.math.BigDecimal;
 
 public class AlertCharge {
 
-	private int min_value, max_value, smsAlertCrncyId;
-	private BigDecimal vendor_charge, tax_charge, bank_charge, total_charge;
+	private int minValue;
+	private int maxValue;
+	private int smsAlertCrncyId;
+	private BigDecimal vendorCharge;
+	private BigDecimal exciseCharge;
+	private BigDecimal bankCharge;
+	private BigDecimal totalCharge;
 
-	public AlertCharge(int min_value, int max_value, BigDecimal vendor_charge, BigDecimal tax_charge,
-                       BigDecimal bank_charge,int smsAlertCrncyId) {
-		super();
-		this.min_value = min_value;
-		this.max_value = max_value;
-		this.vendor_charge = vendor_charge;
-		this.tax_charge = tax_charge;
-		this.bank_charge = bank_charge;
-		this.total_charge = vendor_charge.add(bank_charge).add(tax_charge);
+	// Default constructor
+	public AlertCharge() {}
+
+	// All-args constructor
+	public AlertCharge(int minValue, int maxValue, BigDecimal vendorCharge,
+					   BigDecimal exciseCharge, BigDecimal bankCharge, int smsAlertCrncyId) {
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+		this.vendorCharge = vendorCharge;
+		this.exciseCharge = exciseCharge;
+		this.bankCharge = bankCharge;
 		this.smsAlertCrncyId = smsAlertCrncyId;
 	}
 
-	public int getMin_value() {
-		return min_value;
+
+	// Getters and setters following JavaBean conventions
+	public int getMinValue() {
+		return minValue;
 	}
 
-	public void setMin_value(int min_value) {
-		this.min_value = min_value;
+	public void setMinValue(int minValue) {
+		this.minValue = minValue;
 	}
 
-	public int getMax_value() {
-		return max_value;
+	public int getMaxValue() {
+		return maxValue;
 	}
 
-	public void setMax_value(int max_value) {
-		this.max_value = max_value;
+	public void setMaxValue(int maxValue) {
+		this.maxValue = maxValue;
 	}
 
-	public BigDecimal getVendor_charge() {
-		return vendor_charge;
+
+
+	public BigDecimal getVendorCharge() {
+		return vendorCharge;
 	}
 
-	public void setVendor_charge(BigDecimal vendor_charge) {
-		this.vendor_charge = vendor_charge;
+	public void setVendorCharge(BigDecimal vendorCharge) {
+		this.vendorCharge = vendorCharge;
 	}
 
-	public BigDecimal getTax_charge() {
-		return tax_charge;
+	public BigDecimal getExciseCharge() {
+		return exciseCharge;
 	}
 
-	public void setTax_charge(BigDecimal tax_charge) {
-		this.tax_charge = tax_charge;
+	public void setExciseCharge(BigDecimal exciseCharge) {
+		this.exciseCharge = exciseCharge;
 	}
 
-	public BigDecimal getBank_charge() {
-		return bank_charge;
+	public BigDecimal getBankCharge() {
+		return bankCharge;
 	}
 
-	public void setBank_charge(BigDecimal bank_charge) {
-		this.bank_charge = bank_charge;
+	public void setBankCharge(BigDecimal bankCharge) {
+		this.bankCharge = bankCharge;
 	}
 
-	public BigDecimal getTotal_charge() {
-		return total_charge;
-	}
-
-	public void setTotal_charge(BigDecimal total_charge) {
-		this.total_charge = total_charge;
+	public BigDecimal getTotalCharge() {
+		return totalCharge;
 	}
 
 

@@ -76,7 +76,8 @@ public class AdminService {
                 return ApiResponse.<List<AlertCharge>>builder().data(null)
                         .response(StaticRefs.noRecords()).build();
             } else {
-                return ApiResponse.<List<AlertCharge>>builder().data(list).build();
+                return ApiResponse.<List<AlertCharge>>builder().data(list)
+                        .response(StaticRefs.success()).build();
             }
         } catch (Exception e) {
             Logging.info(e.getMessage());
