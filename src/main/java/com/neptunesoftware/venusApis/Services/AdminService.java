@@ -1,13 +1,11 @@
 package com.neptunesoftware.venusApis.Services;
 
-import com.neptunesoftware.venusApis.Models.AlertCharge;
-import com.neptunesoftware.venusApis.Models.ApiResponse;
-import com.neptunesoftware.venusApis.Models.Response;
-import com.neptunesoftware.venusApis.Models.SmsAlertCurrency;
+import com.neptunesoftware.venusApis.Models.*;
 import com.neptunesoftware.venusApis.Repository.AdminDao;
 import com.neptunesoftware.venusApis.Util.Logging;
 import com.neptunesoftware.venusApis.Util.StaticRefs;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -87,15 +85,19 @@ public class AdminService {
         }
     }
 
-    public Response maintainCharge(Map<String, Object> map) {
+    @Transactional
+    public Response maintainCharge(List<ChargeTiers> request) {
         try {
-            if (map.get("ptid") == null) {
-                adminDao.createCharge(map);
-            } else
-                adminDao.removeCharge(map);
+            if (request.isEmpty())
+                return StaticRefs.noRecords();
+
+            adminDao.removeCharge(request);
+
+            adminDao.createCharge(request);
 
             return StaticRefs.success();
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             Logging.info(e.getMessage());
             return StaticRefs.serverError();
         }

@@ -1,5 +1,6 @@
 package com.neptunesoftware.venusApis.Controller;
 
+import com.neptunesoftware.venusApis.Models.ChargeTierDTO;
 import com.neptunesoftware.venusApis.Models.SmsAlertCurrency;
 import com.neptunesoftware.venusApis.Services.AdminService;
 import org.springframework.http.ResponseEntity;
@@ -35,13 +36,13 @@ public class Admin {
         return ResponseEntity.ok(adminService.maintainSMSAlertCurrency(request));
     }
 
-    @PostMapping(value = "findCharges", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> findCharges(@RequestBody Integer id) {
-        return ResponseEntity.ok(adminService.findCharges(id));
+    @PostMapping(value = "find-currency-charge-tier", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> findCharges(@RequestBody ChargeTierDTO request) {
+        return ResponseEntity.ok(adminService.findCharges(request.getSmsAlertCrncyId()));
     }
 
-    @PostMapping(value = "maintainCharge", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> maintainCharge(@RequestBody Map<String, Object> request) {
-        return ResponseEntity.ok(adminService.maintainCharge(request));
+    @PostMapping(value = "maintain-currency-charge-tier", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> maintainCharge(@RequestBody ChargeTierDTO request) {
+        return ResponseEntity.ok(adminService.maintainCharge(request.getChargeTiers()));
     }
 }
