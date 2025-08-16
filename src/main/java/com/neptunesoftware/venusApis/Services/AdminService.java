@@ -22,9 +22,14 @@ public class AdminService {
         this.adminDao = adminDao;
     }
 
-    public ApiResponse<List<Map<String, Object>>> findInstitutionCurrencies() {
+    public ApiResponse<List<Map<String, Object>>> findInstitutionCurrencies(Integer alertCrncyId) {
         try {
-            List<Map<String, Object>> list = adminDao.findInstitutionCurrencies();
+            List<Map<String, Object>> list = Collections.emptyList();
+            if (alertCrncyId == null) {
+                list = adminDao.findAssignableCurrencies();
+            } else {
+                list = adminDao.findInstitutionCurrencies();
+            }
             return ApiResponse.<List<Map<String, Object>>>builder().data(list)
                     .response(list.isEmpty() ? StaticRefs.noRecords() : StaticRefs.success())
                     .build();
@@ -42,7 +47,8 @@ public class AdminService {
                 return ApiResponse.<List<SmsAlertCurrency>>builder().data(null)
                         .response(StaticRefs.noRecords()).build();
             } else {
-                return ApiResponse.<List<SmsAlertCurrency>>builder().data(list).build();
+                return ApiResponse.<List<SmsAlertCurrency>>builder().data(list)
+                        .response(StaticRefs.success()).build();
             }
         } catch (Exception e) {
             Logging.info(e.getMessage());

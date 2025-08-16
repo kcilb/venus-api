@@ -20,17 +20,17 @@ public class Admin {
         this.adminService = adminService;
     }
 
-    @PostMapping(value = "findInstitutionCurrencies", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> findInstitutionCurrencies() {
-        return ResponseEntity.ok(adminService.findInstitutionCurrencies());
+    @PostMapping(value = "find-currency", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> findInstitutionCurrencies(@RequestBody SmsAlertCurrency request) {
+        return ResponseEntity.ok(adminService.findInstitutionCurrencies(request.getSmsAlertCrncyId()));
     }
 
-    @PostMapping(value = "findSMSAlertCurrencies", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> findSMSAlertCurrencies(@RequestBody Integer id) {
-        return ResponseEntity.ok(adminService.findSMSAlertCurrencies(id));
+    @PostMapping(value = "find-sms-alert-currencies", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> findSMSAlertCurrencies(@RequestBody SmsAlertCurrency request) {
+        return ResponseEntity.ok(adminService.findSMSAlertCurrencies(request.getSmsAlertCrncyId()));
     }
 
-    @PostMapping(value = "maintainSMSAlertCurrency", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "maintain-currency", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> maintainSMSAlertCurrency(@RequestBody SmsAlertCurrency request) {
         return ResponseEntity.ok(adminService.maintainSMSAlertCurrency(request));
     }

@@ -11,10 +11,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,9 +56,38 @@ public class AdminDao {
     public List<Map<String, Object>> findInstitutionCurrencies() {
         try {
             return jdbcTemplate.query(
-                    "SELECT CRNCY_ID,CRNCY_CD, CRNCY_NM FROM " + appProps.coreSchema + ".CURRENCY WHERE REC_ST = 'A'" +
-                            "AND CRNCY_ID NOT IN (SELECT CRNCY_ID FROM SMS_ALERT_CRNCY)"
-                    , new BeanPropertyRowMapper(Map.class));
+                    "SELECT CRNCY_ID, CRNCY_CD, CRNCY_NM,CRNCY_CD_ISO FROM " + appProps.coreSchema +
+                            ".CURRENCY WHERE REC_ST = 'A' ",
+                    (rs, rowNum) -> {
+                        Map<String, Object> row = new HashMap<>();
+                        row.put("crncyId", rs.getInt("CRNCY_ID"));
+                        row.put("crncyCd", rs.getString("CRNCY_CD"));
+                        row.put("crncyIso", rs.getString("CRNCY_CD_ISO"));
+                        row.put("crncyNm", rs.getString("CRNCY_NM"));
+                        return row;
+                    }
+            );
+        } catch (Exception e) {
+            Logging.error(e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public List<Map<String, Object>> findAssignableCurrencies() {
+        try {
+            return jdbcTemplate.query(
+                    "SELECT CRNCY_ID, CRNCY_CD, CRNCY_NM,CRNCY_CD_ISO FROM " + appProps.coreSchema +
+                            ".CURRENCY WHERE REC_ST = 'A' AND CRNCY_ID NOT IN " +
+                            "(SELECT CRNCY_ID FROM SMS_ALERT_CURRENCY)",
+                    (rs, rowNum) -> {
+                        Map<String, Object> row = new HashMap<>();
+                        row.put("crncyId", rs.getInt("CRNCY_ID"));
+                        row.put("crncyCd", rs.getString("CRNCY_CD"));
+                        row.put("crncyIso", rs.getString("CRNCY_CD_ISO"));
+                        row.put("crncyNm", rs.getString("CRNCY_NM"));
+                        return row;
+                    }
+            );
         } catch (Exception e) {
             Logging.error(e.getMessage(), e);
             throw e;
@@ -71,9 +98,9 @@ public class AdminDao {
     public List<SmsAlertCurrency> findSMSAlertCurrencies(Integer alertCrncyId) {
         try {
             return alertCrncyId == null ? jdbcTemplate.query(
-                    "SELECT * FROM SMS_ALERT_CRNCY WHERE STATUS = 'A'"
-                    , new BeanPropertyRowMapper(Map.class)) : jdbcTemplate.query(
-                    "SELECT * FROM SMS_ALERT_CRNCY WHERE  SMS_ALERT_CRNCY_ID = ?"
+                    "SELECT * FROM SMS_ALERT_CURRENCY"
+                    , new BeanPropertyRowMapper(SmsAlertCurrency.class)) : jdbcTemplate.query(
+                    "SELECT * FROM SMS_ALERT_CURRENCY WHERE  SMS_ALERT_CRNCY_ID = ?"
                     , new BeanPropertyRowMapper(SmsAlertCurrency.class), alertCrncyId);
 
         } catch (Exception e) {
@@ -84,8 +111,8 @@ public class AdminDao {
 
     public void createSMSAlertCurrency(SmsAlertCurrency request) {
         try {
-            jdbcTemplate.update("INSERT INTO SMS_ALERT_CRNCY(CRNCY_ISO,CRNCY_ID,STATUS) VALUE(?,?,?)",
-                    request.getCrncyIso(), request.getCrncyId(), request.getStatus());
+            jdbcTemplate.update("INSERT INTO SMS_ALERT_CURRENCY(CRNCY_ISO,CRNCY_NM, CREATED_BY,CRNCY_ID,STATUS) VALUES(?,?,?,?,?)",
+                    request.getCrncyIso(),request.getCrncyNm(),request.getCreatedBy(), request.getCrncyId(), request.getStatus());
         } catch (Exception e) {
             Logging.error(e.getMessage(), e);
             throw e;
@@ -94,7 +121,7 @@ public class AdminDao {
 
     public void updateSMSAlertCurrency(SmsAlertCurrency request) {
         try {
-            jdbcTemplate.update("UPDATE SMS_ALERT_CRNCY SET STATUS = ? WHERE SMS_ALERT_CRNCY_ID = ?",
+            jdbcTemplate.update("UPDATE SMS_ALERT_CURRENCY SET STATUS = ? WHERE SMS_ALERT_CRNCY_ID = ?",
                     request.getStatus(), request.getSmsAlertCrncyId());
         } catch (Exception e) {
             Logging.error(e.getMessage(), e);
