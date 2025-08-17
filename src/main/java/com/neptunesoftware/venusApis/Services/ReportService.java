@@ -5,6 +5,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
+import com.neptunesoftware.venusApis.Util.Logging;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -74,6 +75,7 @@ public class ReportService {
             document.add(logo);
         } catch (Exception e) {
             // Logo not critical, proceed without it
+            Logging.info(e.getMessage());
         }
 
         Paragraph header = new Paragraph();

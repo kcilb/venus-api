@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/apis/v2/admin")
+@RequestMapping("/apis/v2/charges")
 public class Charges {
     private final ChargeService chargeService;
 
