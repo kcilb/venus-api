@@ -24,7 +24,13 @@ public class AuthProvider implements AuthenticationEntryPoint {
 
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("code", "401");
-        responseBody.put("message", "Unauthorized access");
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            responseBody.put("message", "Invalid JWT token");
+        } else {
+            responseBody.put("message", authException.getMessage());
+        }
+
         PrintWriter writer = response.getWriter();
         writer.write(objectMapper.writeValueAsString(responseBody));
         writer.flush();
