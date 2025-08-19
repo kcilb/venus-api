@@ -21,6 +21,10 @@ public class AuthService {
 
     public ApiResponse<?> login(AuthRequest request) {
         try {
+            if (!request.username.equals("VENUS") || !request.password.equals("ADMIN1"))
+                return ApiResponse.builder().data(null)
+                        .response(StaticRefs.customMessage("401", "Invalid credentials supplied")).build();
+
             List<String> roles = List.of("ADMIN");
             Authentication userData = JwtUtil.createAuthentication(request.username, roles);
             String token = jwtUtil.generateToken(userData);
