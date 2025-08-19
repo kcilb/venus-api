@@ -11,11 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.io.Encoders;
-import javax.crypto.SecretKey;
-
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +37,7 @@ public class Extras {
 //        String base64Key = Encoders.BASE64.encode(key.getEncoded());
 
         List<String> roles = List.of("Admin");
-        Authentication auth = JwtUtil.createTestAuthentication("lubega",roles);
+        Authentication auth = JwtUtil.createAuthentication("lubega",roles);
         return ResponseEntity.ok(new JwtUtil().validateToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsdWJlZ2EiLCJpYXQiOjE3NTU0NTU2MzMsImV4cCI6MTc1NTQ1NTYzMywicm9sZXMiOlsiQWRtaW4iXX0.q3dLxa4ztZyqG23GVDsAQ9jqExK8dxcs-USXPSHkqKg"));
     }
 
