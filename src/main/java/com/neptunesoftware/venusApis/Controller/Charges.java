@@ -19,4 +19,9 @@ public class Charges {
         return ResponseEntity.ok(chargeService.processSMSCharges(request.resultSetView,
                 request.isAutoRecoveryInitiated));
     }
+
+    @PostMapping(value = "charge-history", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> chargeHistory(@RequestBody ChargeProcessDTO request) {
+        return ResponseEntity.ok(chargeService.findChargeHistory(request));
+    }
 }

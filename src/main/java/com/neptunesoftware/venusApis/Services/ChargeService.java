@@ -10,6 +10,8 @@ import com.neptunesoftware.supernova.ws.server.transaction.data.TxnResponseOutpu
 import com.neptunesoftware.supernova.ws.server.txnprocess.data.XAPIBaseTxnRequestData;
 import com.neptunesoftware.venusApis.Beans.AppProps;
 import com.neptunesoftware.venusApis.Beans.ItemCacheService;
+import com.neptunesoftware.venusApis.DTOs.ChargeProcessDTO;
+import com.neptunesoftware.venusApis.DTOs.ChargeTierDTO;
 import com.neptunesoftware.venusApis.Models.AlertCharge;
 import com.neptunesoftware.venusApis.Models.AlertRequest;
 import com.neptunesoftware.venusApis.Models.ApiResponse;
@@ -549,6 +551,11 @@ public class ChargeService {
                 , lowFunds.get(), syserr.get(), processedRecords.get(), total);
 
         Logging.info("Method Exit: ChargePosting.run");
+    }
+
+
+    public String findChargeHistory(ChargeProcessDTO request) {
+        return "chargeHistory";
     }
 
 
