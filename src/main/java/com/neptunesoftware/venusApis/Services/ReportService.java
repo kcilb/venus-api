@@ -23,7 +23,7 @@ public class ReportService {
     private static final Font HIGHLIGHT_FONT = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, BaseColor.BLUE);
     private static final BaseColor HEADER_BG_COLOR = new BaseColor(0, 51, 102);
 
-    public static void generateChargeReport(boolean isAutoRecoveryInitiated, int posted
+    public static String generateChargeReport(boolean isAutoRecoveryInitiated, int posted
             , int failed, int lowFunds, int syserr, int processedRecords, int total) {
 
         String outcome = "The Monthly " + (isAutoRecoveryInitiated ? "auto recovery" : "") +
@@ -65,7 +65,10 @@ public class ReportService {
         } catch (DocumentException | IOException e) {
             throw new RuntimeException(e);
         }
+
+        return filePath;
     }
+
 
     private static void addHeader(Document document) throws DocumentException {
         try {

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class ChargeDao {
                         }
                     }
             );
-            return results.isEmpty() ? results : null;
+            return !results.isEmpty() ? results : Collections.emptyList();
         } catch (Exception e) {
             throw e;
         }

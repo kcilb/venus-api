@@ -24,8 +24,8 @@ public class Charges {
                 request.isAutoRecoveryInitiated));
     }
 
-    @PostMapping(value = "charge-history", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> chargeHistory(@RequestBody ChargeProcessDTO request) {
+    @PostMapping(value = "find-charge-history", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> findChargeHistory(@RequestBody ChargeProcessDTO request) {
         return ResponseEntity.ok(chargeService.findChargeHistory(request));
     }
 }

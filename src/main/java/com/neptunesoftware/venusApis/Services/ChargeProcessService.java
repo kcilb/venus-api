@@ -21,12 +21,16 @@ import com.neptunesoftware.venusApis.Models.AlertRequest;
 import com.neptunesoftware.venusApis.Models.ApiResponse;
 import com.neptunesoftware.venusApis.Repository.AlertsDao;
 import com.neptunesoftware.venusApis.Util.Logging;
+import com.neptunesoftware.venusApis.Util.StaticRefs;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -65,7 +69,8 @@ public class ChargeProcessService {
 
 
     //generate pdf report and return to front-end
-    public ApiResponse<String> processSMSCharges(String resultSetView, boolean isAutoRecoveryInitiated) {
+    public ApiResponse<Map<String, String>> processSMSCharges(String resultSetView, boolean isAutoRecoveryInitiated) {
+        Map<String, String> report;
         Logging.info("Method Entry: ChargePosting.run");
         long startTime = System.currentTimeMillis();
         try {
@@ -84,11 +89,16 @@ public class ChargeProcessService {
         } catch (Exception e) {
             Logging.error("Processing failed", e);
             Logging.info(e.getMessage(), e);
+            return ApiResponse.<Map<String, String>>builder().data(null)
+                    .response(StaticRefs.serverError())
+                    .build();
         } finally {
             // Log final results
-            logResults(startTime, isAutoRecoveryInitiated);
+            report = logResults(startTime, isAutoRecoveryInitiated);
         }
-        return null;
+        return ApiResponse.<Map<String, String>>builder().data(report)
+                .response(StaticRefs.success())
+                .build();
     }
 
     private void processAllCharges(String resultSetView) throws SQLException, InterruptedException {
@@ -202,6 +212,7 @@ public class ChargeProcessService {
                 return;
             }
 
+            // consider grouping total charges by currency
             boolean success = attemptChargePostingWithRetry(chargeData);
             if (success) {
                 posted.incrementAndGet();
@@ -491,7 +502,7 @@ public class ChargeProcessService {
 
 
     //call this when running the charges job
-    public boolean loadCoreConnection() {
+    public boolean loadCoreConnection() throws MalformedURLException {
         try {
             Logging.info("Method Entry : AlertCharger.initCoreConnection");
 
@@ -511,8 +522,8 @@ public class ChargeProcessService {
             return true;
         } catch (Exception e) {
             Logging.error(e);
+            throw e;
         }
-        return false;
     }
 
     private static final Properties xapiCodes = new Properties();
@@ -529,7 +540,7 @@ public class ChargeProcessService {
         return xapiCodes.getProperty(errorCode, "Undefined error occured");
     }
 
-    private void logResults(long startTime, boolean isAutoRecoveryInitiated) {
+    private Map<String, String> logResults(long startTime, boolean isAutoRecoveryInitiated) {
         long totalTime = System.currentTimeMillis() - startTime;
         Logging.info("Total Time taken in milliseconds: " + totalTime);
 
@@ -540,10 +551,36 @@ public class ChargeProcessService {
             Logging.error("Failed to log final results", e);
         }
 
-        ReportService.generateChargeReport(isAutoRecoveryInitiated, posted.get(), failed.get()
+        String filePath = ReportService.generateChargeReport(isAutoRecoveryInitiated, posted.get(), failed.get()
                 , lowFunds.get(), syserr.get(), processedRecords.get(), total);
 
-        Logging.info("Method Exit: ChargePosting.run");
+        File file = new File(filePath);
+        if (!file.exists()) {
+            Logging.error("File not found: {}", filePath);
+            return null;
+        }
+
+        Map<String, String> fileInfo = null;
+        try {
+            fileInfo = convertFileToBase64(file);
+        } catch (Exception e) {
+            Logging.error(e);
+        }
+
+        return fileInfo;
+    }
+
+    public Map<String, String> convertFileToBase64(File file) throws IOException {
+        Map<String, String> fileInfo = new HashMap<>();
+        byte[] fileBytes = Files.readAllBytes(file.toPath());
+
+        String encodedFileData = Base64.getEncoder().encodeToString(fileBytes);
+
+        fileInfo.put("encodedFileData", encodedFileData);
+        fileInfo.put("fileName", file.getName());
+        fileInfo.put("filePath", file.getAbsolutePath());
+
+        return fileInfo;
     }
 
 }
