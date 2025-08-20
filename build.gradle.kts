@@ -27,6 +27,8 @@ dependencies {
     implementation("com.itextpdf:itextpdf:5.5.13.3")
     implementation("org.projectlombok:lombok:1.18.38")
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
+    implementation("com.sun.xml.ws:jaxws-rt:2.3.5")
+    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.2")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
     implementation("org.springframework.boot:spring-boot-starter-security")

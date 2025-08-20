@@ -86,16 +86,17 @@ public class ChargeProcessService {
             // Process all charges
             processAllCharges(resultSetView);
 
+            // Process all charges
+            report = logResults(startTime, isAutoRecoveryInitiated);
+
         } catch (Exception e) {
             Logging.error("Processing failed", e);
             Logging.info(e.getMessage(), e);
             return ApiResponse.<Map<String, String>>builder().data(null)
                     .response(StaticRefs.serverError())
                     .build();
-        } finally {
-            // Log final results
-            report = logResults(startTime, isAutoRecoveryInitiated);
         }
+
         return ApiResponse.<Map<String, String>>builder().data(report)
                 .response(StaticRefs.success())
                 .build();
@@ -502,7 +503,7 @@ public class ChargeProcessService {
 
 
     //call this when running the charges job
-    public boolean loadCoreConnection() throws MalformedURLException {
+    public boolean loadCoreConnection() {
         try {
             Logging.info("Method Entry : AlertCharger.initCoreConnection");
 
@@ -522,7 +523,7 @@ public class ChargeProcessService {
             return true;
         } catch (Exception e) {
             Logging.error(e);
-            throw e;
+            return false;
         }
     }
 
