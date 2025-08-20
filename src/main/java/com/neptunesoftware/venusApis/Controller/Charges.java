@@ -1,6 +1,7 @@
 package com.neptunesoftware.venusApis.Controller;
 
 import com.neptunesoftware.venusApis.DTOs.ChargeProcessDTO;
+import com.neptunesoftware.venusApis.Services.ChargeProcessService;
 import com.neptunesoftware.venusApis.Services.ChargeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,14 +10,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/apis/v2/charges")
 public class Charges {
     private final ChargeService chargeService;
+    private final ChargeProcessService chargeProcessService;
 
-    public Charges(ChargeService chargeService) {
+    public Charges(ChargeService chargeService, ChargeProcessService chargeProcessService) {
         this.chargeService = chargeService;
+        this.chargeProcessService = chargeProcessService;
     }
 
     @PostMapping(value = "process-charges", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> processCharges(@RequestBody ChargeProcessDTO request) {
-        return ResponseEntity.ok(chargeService.processSMSCharges(request.resultSetView,
+        String resultView = request.isAutoRecoveryInitiated ? "V_FAILED_CHARGES" : "V_PENDING_CHARGES";
+        return ResponseEntity.ok(chargeProcessService.processSMSCharges(resultView,
                 request.isAutoRecoveryInitiated));
     }
 

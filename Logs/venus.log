@@ -1526,3 +1526,7 @@ PL/SQL: Statement ignored
 	... 47 common frames omitted
 
 2025-08-19T21:32:00.224+03:00  INFO 6184 --- [venusApis] [scheduling-1] c.n.venusApis.Jobs.LoadAlerts            : Completed scheduled callable services
+2025-08-19T21:32:43.026+03:00  INFO 6184 --- [venusApis] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-19T21:32:43.604+03:00  INFO 6184 --- [venusApis] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-19T21:32:43.636+03:00  INFO 6184 --- [venusApis] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-08-19T21:32:43.959+03:00  INFO 6184 --- [venusApis] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
