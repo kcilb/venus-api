@@ -22,6 +22,7 @@ import com.neptunesoftware.venusApis.Models.ApiResponse;
 import com.neptunesoftware.venusApis.Repository.AlertsDao;
 import com.neptunesoftware.venusApis.Util.Logging;
 import com.neptunesoftware.venusApis.Util.StaticRefs;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -31,6 +32,7 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -47,6 +49,7 @@ public class ChargeProcessService {
     private static final int MAX_RETRIES = 3;
     private static final int THREAD_POOL_SIZE = 4; // Match your API rate limits
     private static final int RETRY_DELAY_MS = 1000;
+    private static int currencyId = 0;
 
     private final SimpleDateFormat format = new SimpleDateFormat("MMM yyyy");
 
@@ -60,6 +63,10 @@ public class ChargeProcessService {
     private static List<AlertCharge> sms_charges = Collections.emptyList();
     private int total;
 
+
+    @Value("${app.venus.rubiApi}")
+    private String rubiApi;
+
     public ChargeProcessService(AppProps appProps, ItemCacheService cacheService, AlertsDao alertsDao) {
         this.appProps = appProps;
         this.cacheService = cacheService;
@@ -69,7 +76,7 @@ public class ChargeProcessService {
 
 
     //generate pdf report and return to front-end
-    public ApiResponse<Map<String, String>> processSMSCharges(String resultSetView, boolean isAutoRecoveryInitiated) {
+    public ApiResponse<Map<String, String>> processSMSCharges(String resultSetView, boolean isAutoRecoveryInitiated, Integer currency) {
         Map<String, String> report;
         Logging.info("Method Entry: ChargePosting.run");
         long startTime = System.currentTimeMillis();
@@ -83,6 +90,8 @@ public class ChargeProcessService {
             // Get total count
             getTotalRecords(resultSetView);
 
+
+            currencyId = currency;
             // Process all charges
             processAllCharges(resultSetView);
 
@@ -143,7 +152,7 @@ public class ChargeProcessService {
 
         //sms alert currency id has to exist in the smsbank table
         // comes with the iso code/currency attached to the account
-        List<AlertRequest> alertRequests = alertsDao.findPendingCharges(pageNumber, PAGE_SIZE, resultSetView);
+        List<AlertRequest> alertRequests = alertsDao.findPendingCharges(pageNumber, PAGE_SIZE, currencyId, resultSetView);
         if (alertRequests.isEmpty())
             return Collections.emptyList();
 
@@ -453,7 +462,7 @@ public class ChargeProcessService {
     private void updateChargeStatus(AlertRequest chargeData) {
         try {
             alertsDao.updateSMSCount(chargeData.getAccount(), "Success", "C", chargeData.getChargeAmount(),
-                    chargeData.getSmsCount(), new java.sql.Date(chargeData.getLogDate().getTime()));
+                    chargeData.getSmsCount(), new Date(chargeData.getLogDate().getTime()));
         } catch (Exception ex) {
             Logging.info("Failed to update charge status");
             throw ex;
@@ -488,7 +497,6 @@ public class ChargeProcessService {
     }
 
     public static Map<String, String> endpointFunctions = new HashMap<String, String>();
-    public static String rubiApi = null;
     public AccountWebServiceStub accountEndPoint;
     private TxnProcessWebServiceStub txnWebEndPoint;
     private TransactionsWebServiceStub transactionsEndPoint;
@@ -508,15 +516,15 @@ public class ChargeProcessService {
             Logging.info("Method Entry : AlertCharger.initCoreConnection");
 
             accountEndPoint = new AccountWebServiceEndPointPort(
-                    new URL("http://10.0.1.13:9003/supernovaws/" + endpointFunctions.get("account-web-service")))
+                    new URL(rubiApi + endpointFunctions.get("account-web-service")))
                     .getAccountWebServiceStubPort();
 
             transactionsEndPoint = new TransactionsWebServiceEndPointPort(
-                    new URL("http://10.0.1.13:9003/supernovaws/" + endpointFunctions.get("transaction-web-service")))
+                    new URL(rubiApi + endpointFunctions.get("transaction-web-service")))
                     .getTransactionsWebServiceStubPort();
 
             txnWebEndPoint = new TxnProcessWebServiceEndPointPort(
-                    new URL("http://10.0.1.13:9003/supernovaws/" + endpointFunctions.get("txnprocess-web-service")))
+                    new URL(rubiApi + endpointFunctions.get("txnprocess-web-service")))
                     .getTxnProcessWebServiceStubPort();
 
             Logging.info("Method Exit : AlertCharger.initCoreConnection");

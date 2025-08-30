@@ -70,13 +70,13 @@ public class AlertsDao {
         }
     }
 
-    public List<AlertRequest> findPendingCharges(int pageNo, int pageSize, String resultSetView) {
+    public List<AlertRequest> findPendingCharges(int pageNo, int pageSize, int currency, String resultSetView) {
         try {
             int pageNumber = (pageNo - 1) * pageSize;
             int offset = pageSize;
-            String sql = "SELECT * FROM " + resultSetView + " ORDER BY ACCT_NO OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+            String sql = "SELECT * FROM " + resultSetView + " WHERE SMS_CURRENCY_ID = ? ORDER BY ACCT_NO OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
             return jdbcTemplate.query(sql,
-                    new BeanPropertyRowMapper<>(AlertRequest.class), pageNumber, offset
+                    new BeanPropertyRowMapper<>(AlertRequest.class),currency, pageNumber, offset
             );
         } catch (EmptyResultDataAccessException e) {
             throw e;

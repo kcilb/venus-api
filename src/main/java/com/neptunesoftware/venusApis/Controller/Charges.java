@@ -21,7 +21,7 @@ public class Charges {
     public ResponseEntity<?> processCharges(@RequestBody ChargeProcessDTO request) {
         String resultView = request.isAutoRecoveryInitiated ? "V_FAILED_CHARGES" : "V_PENDING_CHARGES";
         return ResponseEntity.ok(chargeProcessService.processSMSCharges(resultView,
-                request.isAutoRecoveryInitiated));
+                request.isAutoRecoveryInitiated,request.currencyId));
     }
 
     @PostMapping(value = "find-charge-history", consumes = "application/json", produces = "application/json")
