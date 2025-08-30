@@ -74,7 +74,7 @@ public class AlertsDao {
         try {
             int pageNumber = (pageNo - 1) * pageSize;
             int offset = pageSize;
-            String sql = "SELECT * FROM " + resultSetView + " WHERE SMS_CURRENCY_ID = ? ORDER BY ACCT_NO OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+            String sql = "SELECT * FROM " + resultSetView + " WHERE SMS_ALERT_CRNCY_ID = ? ORDER BY ACCT_NO OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
             return jdbcTemplate.query(sql,
                     new BeanPropertyRowMapper<>(AlertRequest.class),currency, pageNumber, offset
             );
