@@ -32,6 +32,12 @@ public class AppProps {
     @Value("${app.venus.callableTasks}")
     public String callableTasks;
 
+    @Value("${app.venus.pendingCharge}")
+    public String pendingCharge;
+
+    @Value("${app.venus.failedCharge}")
+    public String failedCharge;
+
     @Value("${app.venus.taxChargeGl}")
     public String taxChargeGl;
 
@@ -46,7 +52,6 @@ public class AppProps {
 
     @Value("${app.venus.skipLicenseCheck}")
     public String skipLicenseCheck;
-
 
 
 }
