@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("apis/v2/auth")
+@RequestMapping("/apis/v2/auth")
 public class Auth {
 
     public final AuthService authService;
