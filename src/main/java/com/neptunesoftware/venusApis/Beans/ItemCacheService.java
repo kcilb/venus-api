@@ -2,12 +2,15 @@ package com.neptunesoftware.venusApis.Beans;
 
 
 import com.neptunesoftware.venusApis.Models.CachedItems;
+import com.neptunesoftware.venusApis.Models.SmsAlertCurrency;
 import com.neptunesoftware.venusApis.Repository.AdminDao;
 import com.neptunesoftware.venusApis.Repository.AlertsDao;
 import com.neptunesoftware.venusApis.Util.Logging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 public class ItemCacheService {
@@ -33,6 +36,15 @@ public class ItemCacheService {
         synchronized (lock) {
             return cachedItems;
         }
+    }
+
+    public String getCurrencyNameById(Integer currencyId) {
+        return getCachedItem().smsCurrencyList.stream()
+                .filter(currency -> currencyId.equals(currency.getSmsAlertCrncyId())
+                )
+                .findFirst()
+                .map(SmsAlertCurrency::getCrncyNm)
+                .orElse("Currency not found");
     }
 
     @Scheduled(cron = "0 0 10 * * *")

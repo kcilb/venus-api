@@ -184,7 +184,7 @@ public class AlertsDao {
         }
     }
 
-    public void logResults(int total, int lowFunds, int posted, int failed, BigDecimal totalCharge) {
+    public void logResults(int total, int lowFunds, int posted, int failed, BigDecimal totalCharge,String currencyName) {
         try {
             String sql = "INSERT INTO SMSBANK.SMS_CHARGE_LOG " +
                     "(TOTAL_ACCOUNTS, LOW_FUNDS_COUNT, PROCESSED_COUNT, FAILED_COUNT, RECOVERED_AMT, " +
@@ -196,7 +196,7 @@ public class AlertsDao {
                     posted,
                     failed,
                     totalCharge,
-                    "Monthly SMS charge routine",
+                    "Monthly SMS charge routine for "+currencyName,
                     "P"
             );
         } catch (Exception ex) {

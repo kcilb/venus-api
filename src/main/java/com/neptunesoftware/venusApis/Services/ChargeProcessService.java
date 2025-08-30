@@ -50,6 +50,7 @@ public class ChargeProcessService {
     private static final int THREAD_POOL_SIZE = 4; // Match your API rate limits
     private static final int RETRY_DELAY_MS = 1000;
     private static int currencyId = 0;
+    private static String currencyName;
 
     private final SimpleDateFormat format = new SimpleDateFormat("MMM yyyy");
 
@@ -82,16 +83,17 @@ public class ChargeProcessService {
         long startTime = System.currentTimeMillis();
         try {
             // Initialize core connection
-            loadCoreConnection();
+            //loadCoreConnection();
 
             // Load charge configurations (thread-safe)
-            loadCharges();
+            //loadCharges();
 
             // Get total count
-            getTotalRecords(resultSetView);
+            //getTotalRecords(resultSetView);
 
 
             currencyId = currency;
+            currencyName = cacheService.getCurrencyNameById(currencyId);
             // Process all charges
             processAllCharges(resultSetView);
 
@@ -555,7 +557,7 @@ public class ChargeProcessService {
 
         // Log final results to database
         try {
-            alertsDao.logResults(total, lowFunds.get(), posted.get(), failed.get(), totalCharge.get());
+            alertsDao.logResults(total, lowFunds.get(), posted.get(), failed.get(), totalCharge.get(),currencyName);
         } catch (Exception e) {
             Logging.error("Failed to log final results", e);
         }

@@ -15,10 +15,8 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
@@ -42,6 +40,9 @@ public class AdminDao {
             item.processDt = findProcessingDt();
             item.callableTasks = appProps.callableTasks.split(",");
             item.chargesList = findCharges(null);
+            item.smsCurrencyList = findSMSAlertCurrencies(null)
+                    .stream().filter(f -> Objects.equals(f.getStatus(), "A"))
+                    .collect(Collectors.toList());
             return item;
         } catch (Exception e) {
             Logging.error(e.getMessage(), e);
