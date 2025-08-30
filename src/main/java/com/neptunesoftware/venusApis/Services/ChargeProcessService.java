@@ -83,14 +83,13 @@ public class ChargeProcessService {
         long startTime = System.currentTimeMillis();
         try {
             // Initialize core connection
-            //loadCoreConnection();
+            loadCoreConnection();
 
             // Load charge configurations (thread-safe)
-            //loadCharges();
+            loadCharges();
 
             // Get total count
-            //getTotalRecords(resultSetView);
-
+            getTotalRecords(resultSetView);
 
             currencyId = currency;
             currencyName = cacheService.getCurrencyNameById(currencyId);
