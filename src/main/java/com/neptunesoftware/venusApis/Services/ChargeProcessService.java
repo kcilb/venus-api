@@ -1,5 +1,6 @@
 package com.neptunesoftware.venusApis.Services;
 
+import com.neptunesoftware.supernova.ws.client.security.BasicHTTPAuthenticator;
 import com.neptunesoftware.supernova.ws.common.XAPIException;
 import com.neptunesoftware.supernova.ws.common.XAPIRequestBaseObject;
 import com.neptunesoftware.supernova.ws.server.account.AccountWebServiceEndPointPort;
@@ -19,9 +20,11 @@ import com.neptunesoftware.venusApis.Beans.ItemCacheService;
 import com.neptunesoftware.venusApis.Models.AlertCharge;
 import com.neptunesoftware.venusApis.Models.AlertRequest;
 import com.neptunesoftware.venusApis.Models.ApiResponse;
+import com.neptunesoftware.venusApis.Models.Response;
 import com.neptunesoftware.venusApis.Repository.AlertsDao;
 import com.neptunesoftware.venusApis.Util.Logging;
 import com.neptunesoftware.venusApis.Util.StaticRefs;
+import com.neptunesoftware.venusApis.Util.XapiReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -256,11 +260,9 @@ public class ChargeProcessService {
             return data.getAvailableBalance() == null ? BigDecimal.ZERO : data.getAvailableBalance();
         } catch (Exception e) {
             Logging.error(e);
-            if (e instanceof XAPIException && ((XAPIException) e).getErrorCodes().length > 0) {
-                String errorCode = ((XAPIException) e).getErrorCodes()[0];
-                tXRequest.setErrorcode(errorCode);
-                tXRequest.setReason(getErrorDesc(errorCode));
-            }
+            ApiResponse<String> apiResponse = new ApiResponse<>();
+            tXRequest.setErrorcode(XapiReader.readXapi(e.toString(), apiResponse).getCode());
+            tXRequest.setReason(XapiReader.readXapi(e.toString(), apiResponse).getMessage());
             return BigDecimal.ZERO;
         } finally {
             Logging.info("Processed Balance Enquiry " + tXRequest.getAccount());
@@ -324,9 +326,9 @@ public class ChargeProcessService {
             if (response instanceof TxnResponseOutputData) {
                 irequest.setBankChargePosted("00".equals(((TxnResponseOutputData) response).getResponseCode()));
             } else if (response instanceof XAPIException) {
-                if (((XAPIException) response).getErrorCodes().length > 0) {
-                    irequest.setReason(((XAPIException) response).getErrorCodes()[0]);
-                }
+                ApiResponse<String> apiResponse = new ApiResponse<>();
+                irequest.setErrorcode(XapiReader.readXapi(response.toString(), apiResponse).getCode());
+                irequest.setReason(XapiReader.readXapi(response.toString(), apiResponse).getMessage());
                 Logging.info("Error processing bank charge " + irequest.getReason());
             }
             return irequest.isBankChargePosted();
@@ -352,9 +354,9 @@ public class ChargeProcessService {
             } else if (response instanceof TxnResponseOutputData) {
                 irequest.setVendorChargePosted("00".equals(((TxnResponseOutputData) response).getResponseCode()));
             } else if (response instanceof XAPIException) {
-                if (((XAPIException) response).getErrorCodes().length > 0) {
-                    irequest.setReason(((XAPIException) response).getErrorCodes()[0]);
-                }
+                ApiResponse<String> apiResponse = new ApiResponse<>();
+                irequest.setErrorcode(XapiReader.readXapi(response.toString(), apiResponse).getCode());
+                irequest.setReason(XapiReader.readXapi(response.toString(), apiResponse).getMessage());
                 Logging.info("Error processing vendor charge " + irequest.getReason());
             }
             return irequest.isVendorChargePosted();
@@ -377,9 +379,9 @@ public class ChargeProcessService {
             if (response instanceof TxnResponseOutputData) {
                 irequest.setTaxChargePosted("00".equals(((TxnResponseOutputData) response).getResponseCode()));
             } else if (response instanceof XAPIException) {
-                if (((XAPIException) response).getErrorCodes().length > 0) {
-                    irequest.setReason(((XAPIException) response).getErrorCodes()[0]);
-                }
+                ApiResponse<String> apiResponse = new ApiResponse<>();
+                irequest.setErrorcode(XapiReader.readXapi(response.toString(), apiResponse).getCode());
+                irequest.setReason(XapiReader.readXapi(response.toString(), apiResponse).getMessage());
                 Logging.info("Error processing Tax charge " + irequest.getReason());
             }
             return irequest.isTaxChargePosted();
@@ -420,11 +422,9 @@ public class ChargeProcessService {
             return transactionsEndPoint.postGLtoGLXfer(glTransferRequest);
         } catch (Exception e) {
             Logging.error(e);
-            if (e instanceof XAPIException && ((XAPIException) e).getErrorCodes().length > 0) {
-                String errorCode = ((XAPIException) e).getErrorCodes()[0];
-                tXRequest.setErrorcode(errorCode);
-                tXRequest.setReason(getErrorDesc(errorCode));
-            }
+            ApiResponse<String> apiResponse = new ApiResponse<>();
+            tXRequest.setErrorcode(XapiReader.readXapi(e.toString(), apiResponse).getCode());
+            tXRequest.setReason(XapiReader.readXapi(e.toString(), apiResponse).getMessage());
             return e;
 
         } finally {
@@ -449,12 +449,9 @@ public class ChargeProcessService {
             return txnWebEndPoint.postDepositToGLAccountTransfer(requestData);
         } catch (Exception e) {
             Logging.error(e);
-
-            if (e instanceof XAPIException && ((XAPIException) e).getErrorCodes().length > 0) {
-                String errorCode = ((XAPIException) e).getErrorCodes()[0];
-                tXRequest.setErrorcode(errorCode);
-                tXRequest.setReason(getErrorDesc(errorCode));
-            }
+            ApiResponse<String> apiResponse = new ApiResponse<>();
+            tXRequest.setErrorcode(XapiReader.readXapi(e.toString(), apiResponse).getCode());
+            tXRequest.setReason(XapiReader.readXapi(e.toString(), apiResponse).getMessage());
             return e;
         }
     }
@@ -514,19 +511,29 @@ public class ChargeProcessService {
     //call this when running the charges job
     public boolean loadCoreConnection() {
         try {
+
+            Authenticator.setDefault(new BasicHTTPAuthenticator("proxy_user", "proxy_password"));
+
+
+            Logging.info(endpointFunctions.get("account-web-service"));
             Logging.info("Method Entry : AlertCharger.initCoreConnection");
 
-            accountEndPoint = new AccountWebServiceEndPointPort(
+
+            accountEndPoint = (new AccountWebServiceEndPointPort(
                     new URL(rubiApi + endpointFunctions.get("account-web-service")))
-                    .getAccountWebServiceStubPort();
+                    .getAccountWebServiceStubPort());
 
-            transactionsEndPoint = new TransactionsWebServiceEndPointPort(
+            transactionsEndPoint = (new TransactionsWebServiceEndPointPort(
                     new URL(rubiApi + endpointFunctions.get("transaction-web-service")))
-                    .getTransactionsWebServiceStubPort();
+                    .getTransactionsWebServiceStubPort());
 
-            txnWebEndPoint = new TxnProcessWebServiceEndPointPort(
+            txnWebEndPoint = (new TxnProcessWebServiceEndPointPort(
                     new URL(rubiApi + endpointFunctions.get("txnprocess-web-service")))
-                    .getTxnProcessWebServiceStubPort();
+                    .getTxnProcessWebServiceStubPort());
+
+            System.out.println("<< account-web-service : initialize completed >>");
+            System.out.println("<< transaction-web-service : initialize completed >>");
+            System.out.println("<< txnprocess-web-service : initialize completed >>");
 
             Logging.info("Method Exit : AlertCharger.initCoreConnection");
             return true;
@@ -556,7 +563,7 @@ public class ChargeProcessService {
 
         // Log final results to database
         try {
-            alertsDao.logResults(total, lowFunds.get(), posted.get(), failed.get(), totalCharge.get(),currencyName);
+            alertsDao.logResults(total, lowFunds.get(), posted.get(), failed.get(), totalCharge.get(), currencyName);
         } catch (Exception e) {
             Logging.error("Failed to log final results", e);
         }

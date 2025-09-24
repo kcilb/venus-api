@@ -53,5 +53,9 @@ public class AppProps {
     @Value("${app.venus.skipLicenseCheck}")
     public String skipLicenseCheck;
 
+    @Value("${io.config.xapiFilePath}")
+    public String xapiFilePath;
+
+
 
 }

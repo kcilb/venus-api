@@ -46,6 +46,7 @@ public class ChargeService {
                     .build();
 
         } catch (Exception e) {
+            Logging.error(e.getMessage(), e);
             return ApiResponse.builder().data(null)
                     .response(StaticRefs.serverError()).build();
         }

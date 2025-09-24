@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -28,13 +29,16 @@ public class ChargeDao {
             String sql = "SELECT TOTAL_ACCOUNTS, LOW_FUNDS_COUNT, PROCESSED_COUNT, " +
                     "FAILED_COUNT, RECOVERED_AMT, CHARGE_DESC, CREATE_DT, STATUS " +
                     "FROM SMSBANK.SMS_CHARGE_LOG " +
-                    "WHERE CREATE_DT BETWEEN ? AND ?";
+                    "WHERE TRUNC(CREATE_DT) BETWEEN TRUNC(?) AND TRUNC(?)";
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String date = dtf.format(startDate.toLocalDate());
 
             List<SMSChargeLog> results = jdbcTemplate.query(
                     sql,
                     new Object[]{
-                            new java.sql.Timestamp(startDate.getTime()),
-                            new java.sql.Timestamp(endDate.getTime())
+                            new java.sql.Date(startDate.getTime()),  // Use java.sql.Date
+                            new java.sql.Date(endDate.getTime())     // Use java.sql.Date
                     },
                     new RowMapper<SMSChargeLog>() {
                         @Override

@@ -1,5 +1,6 @@
 package com.neptunesoftware.venusApis.Repository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neptunesoftware.venusApis.Beans.AppProps;
 import com.neptunesoftware.venusApis.Models.*;
 import com.neptunesoftware.venusApis.Util.Logging;
@@ -34,15 +35,18 @@ public class AlertsDao {
     public TrxnSmsList findTransactionAlerts(String lastMsgId) {
         TrxnSmsList tranList;
         try {
-            String lastMessageId = (lastMsgId != null)
-                    && (!lastMsgId.trim().isEmpty()) ? lastMsgId
-                    : "0";
+            Integer lastMessageId = (lastMsgId != null)
+                    && (!lastMsgId.trim().isEmpty()) ? Integer.parseInt(lastMsgId)
+                    : 0;
             int fetchLimit = appProps.fetchLimit;
 
             List<SMS> messageList = jdbcTemplate
                     .query("select * from v_outward_messages_dep where recordID > ? and rownum <= ?",
                             new BeanPropertyRowMapper<>(
                                     SMS.class), lastMessageId, fetchLimit);
+            ObjectMapper mapper = new ObjectMapper();
+            Logging.info("MESSAGES_LIST");
+            Logging.info(mapper.writeValueAsString(messageList));
             if (!messageList.isEmpty())
                 tranList = new TrxnSmsList("0", "Success", messageList);
             else

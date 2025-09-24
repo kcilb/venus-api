@@ -3,7 +3,6 @@ package com.neptunesoftware.venusApis.Models;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -118,13 +117,4 @@ public class SmsAlertCurrency implements Serializable {
         this.status = status;
     }
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdDate = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.modifiedDate = LocalDateTime.now();
-    }
 }
