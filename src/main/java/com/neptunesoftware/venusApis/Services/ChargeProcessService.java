@@ -43,6 +43,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 public class ChargeProcessService {
@@ -53,8 +55,8 @@ public class ChargeProcessService {
     private static final int MAX_RETRIES = 3;
     private static final int THREAD_POOL_SIZE = 4; // Match your API rate limits
     private static final int RETRY_DELAY_MS = 1000;
-    private static int currencyId = 0;
-    private static String currencyName;
+    private int currencyId = 0;
+    private String currencyName;
 
     private final SimpleDateFormat format = new SimpleDateFormat("MMM yyyy");
 
@@ -153,7 +155,7 @@ public class ChargeProcessService {
 
     private List<AlertRequest> fetchBatch(int pageNumber, String resultSetView) throws SQLException {
 
-        List<AlertRequest> batch = Collections.emptyList();
+        List<AlertRequest> batch = new ArrayList<>();
 
         //sms alert currency id has to exist in the smsbank table
         // comes with the iso code/currency attached to the account
@@ -163,20 +165,30 @@ public class ChargeProcessService {
 
         for (AlertRequest alertRequest : alertRequests) {
             // filter all charges attached to the currency
-            sms_charges = sms_charges.stream().filter(f -> f.getSmsAlertCrncyId() == alertRequest.getSmsAlertCrncyId()).toList();
-            AlertCharge charge = computeCharge(alertRequest.getSmsCount());
+            List<AlertCharge> filteredCharges = sms_charges.stream()
+                    .filter(charge -> charge.getSmsAlertCrncyId() == currencyId) // Filter by current currency
+                    .collect(Collectors.toList());
+            AlertCharge charge = computeCharge(alertRequest.getSmsCount(),filteredCharges);
             batch.add(buildAlertRequest(alertRequest, charge));
         }
         return batch;
     }
 
-    private AlertCharge computeCharge(int sms_count) {
-        return sms_charges.stream()
-                .filter(c -> sms_count >= c.getMinValue() &&
-                        sms_count <= c.getMaxValue())
+
+    private AlertCharge computeCharge(int sms_count, List<AlertCharge> charges) {
+        return charges.stream()
+                .filter(c -> sms_count >= c.getMinValue() && sms_count <= c.getMaxValue())
                 .findFirst()
                 .orElse(null);
     }
+
+//    private AlertCharge computeCharge(int sms_count) {
+//        return sms_charges.stream()
+//                .filter(c -> sms_count >= c.getMinValue() &&
+//                        sms_count <= c.getMaxValue())
+//                .findFirst()
+//                .orElse(null);
+//    }
 
     private AlertRequest buildAlertRequest(AlertRequest alertRequest, AlertCharge charge) throws SQLException {
         return new AlertRequest(alertRequest.getAccount(), null, null,
