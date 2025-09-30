@@ -70,13 +70,18 @@ public class AlertCharge {
 		this.bankCharge = bankCharge;
 	}
 
-	public BigDecimal getTotalCharge() {
-		return totalCharge;
-	}
 
 
 	public int getSmsAlertCrncyId() {return smsAlertCrncyId;}
 
 	public void setSmsAlertCrncyId(int smsAlertCrncyId) {this.smsAlertCrncyId = smsAlertCrncyId;}
+
+	public BigDecimal getTotalCharge() {
+		BigDecimal total = BigDecimal.ZERO;
+		if (vendorCharge != null) total = total.add(vendorCharge);
+		if (exciseCharge != null) total = total.add(exciseCharge);
+		if (bankCharge != null) total = total.add(bankCharge);
+		return total;
+	}
 
 }
