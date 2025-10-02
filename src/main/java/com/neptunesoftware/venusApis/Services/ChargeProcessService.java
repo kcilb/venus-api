@@ -181,14 +181,6 @@ public class ChargeProcessService {
                 .orElse(null);
     }
 
-//    private AlertCharge computeCharge(int sms_count) {
-//        return sms_charges.stream()
-//                .filter(c -> sms_count >= c.getMinValue() &&
-//                        sms_count <= c.getMaxValue())
-//                .findFirst()
-//                .orElse(null);
-//    }
-
     private AlertRequest buildAlertRequest(AlertRequest alertRequest, AlertCharge charge) throws SQLException {
         return new AlertRequest(alertRequest.getAcctNo(), null, null,
                 String.valueOf(System.currentTimeMillis()), alertRequest.getTxnCurrency(), "SMS", null,

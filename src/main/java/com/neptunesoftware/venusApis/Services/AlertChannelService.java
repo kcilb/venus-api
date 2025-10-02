@@ -24,7 +24,8 @@ public class AlertChannelService {
     public TrxnSmsList findTransactionAlerts(String body) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            String lastMsgId = mapper.readValue(body, String.class);
+            Map<String,Object> map = mapper.readValue(body, Map.class);
+            String lastMsgId = (String) map.get("lastMsgId");
             return alertsDao.findTransactionAlerts(lastMsgId);
         } catch (Exception e) {
             Logging.error(e.getMessage(),e);
