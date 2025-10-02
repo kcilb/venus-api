@@ -1,5 +1,7 @@
 package com.neptunesoftware.venusApis.Services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neptunesoftware.supernova.ws.client.security.BasicHTTPAuthenticator;
 import com.neptunesoftware.supernova.ws.common.XAPIException;
 import com.neptunesoftware.supernova.ws.common.XAPIRequestBaseObject;
@@ -20,7 +22,6 @@ import com.neptunesoftware.venusApis.Beans.ItemCacheService;
 import com.neptunesoftware.venusApis.Models.AlertCharge;
 import com.neptunesoftware.venusApis.Models.AlertRequest;
 import com.neptunesoftware.venusApis.Models.ApiResponse;
-import com.neptunesoftware.venusApis.Models.Response;
 import com.neptunesoftware.venusApis.Repository.AlertsDao;
 import com.neptunesoftware.venusApis.Util.Logging;
 import com.neptunesoftware.venusApis.Util.StaticRefs;
@@ -33,7 +34,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.Authenticator;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.sql.Date;
@@ -43,7 +43,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -191,22 +190,22 @@ public class ChargeProcessService {
 //    }
 
     private AlertRequest buildAlertRequest(AlertRequest alertRequest, AlertCharge charge) throws SQLException {
-        return new AlertRequest(alertRequest.getAccount(), null, null,
+        return new AlertRequest(alertRequest.getAcctNo(), null, null,
                 String.valueOf(System.currentTimeMillis()), alertRequest.getTxnCurrency(), "SMS", null,
-                alertRequest.getAccount(), null,
+                alertRequest.getAcctNo(), null,
                 unmaskGLAccount(alertRequest.getGlPrefixCd(), appProps.bankChargeGl),
                 unmaskGLAccount(alertRequest.getGlPrefixCd(), appProps.taxChargeGl),
                 unmaskGLAccount(alertRequest.getGlPrefixCd(), appProps.vendorChargeGl), null, null,
                 null, null, format.format(alertRequest.getLogDate()) + " Monthly SMS Charge",
-                alertRequest.getAccount(), null, null, charge.getTotalCharge(), charge.getBankCharge(),
+                alertRequest.getAcctNo(), null, null, charge.getTotalCharge(), charge.getBankCharge(),
                 charge.getExciseCharge(), charge.getVendorCharge(), 9L, alertRequest.getSmsCount(), false,
                 false, false, alertRequest.getSmsCount(), alertRequest.getLogDate(),
-                alertRequest.getSmsAlertCrncyId());
+                alertRequest.getSmsAlertCrncyId(), alertRequest.getGlPrefixCd());
     }
 
     private void handleInsufficientFunds(AlertRequest chargeData) throws SQLException {
         try {
-            alertsDao.updateSMSCount(chargeData.getAccount(), "Insufficient Funds On Account.",
+            alertsDao.updateSMSCount(chargeData.getAcctNo(), "Insufficient Funds On Account.",
                     "N", null, chargeData.getSmsCount(), chargeData.getLogDate());
         } catch (Exception e) {
             Logging.info("Error updating insufficient balance account SMS count");
@@ -219,8 +218,12 @@ public class ChargeProcessService {
 
             Logging.info(">>>>>>>>>>>>>>>>> ACCOUNT_CHARGE_PROCESSING <<<<<<<<<<<<<<<<<<<<<<<");
             Logging
-                    .info("Balance Check  for " + chargeData.getAccount());
+                    .info("Balance Check  for " + chargeData.getAcctNo());
+            Logging.info(new ObjectMapper().writeValueAsString(chargeData));
             BigDecimal balance = queryDepositAccountBalance(chargeData);
+
+            Logging.info(">>>>>>>>>>>>>>>>> ACCOUNT_CHARGE_PROCESSING_RESPONSE <<<<<<<<<<<<<<<<<<<<<<<");
+            Logging.info(new ObjectMapper().writeValueAsString(balance));
 
             if (balance == null) {
                 syserr.incrementAndGet();
@@ -230,7 +233,7 @@ public class ChargeProcessService {
 
             Logging.info(">>>>>>>>>>>>>>>>> ACCOUNT_CHARGE_POSTING <<<<<<<<<<<<<<<<<<<<<<<");
             Logging
-                    .info("Handling Charge Posting for " + chargeData.getAccount() + " with bal " + balance);
+                    .info("Handling Charge Posting for " + chargeData.getAcctNo() + " with bal " + balance);
 
             if (balance.compareTo(chargeData.getChargeAmount()) <= 0) {
                 handleInsufficientFunds(chargeData);
@@ -252,8 +255,10 @@ public class ChargeProcessService {
             }
             processedRecords.incrementAndGet();
         } catch (SQLException e) {
-            Logging.error("Processing failed for " + chargeData.getAccount(), e);
+            Logging.error("Processing failed for " + chargeData.getAcctNo(), e);
             failed.incrementAndGet();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -277,7 +282,7 @@ public class ChargeProcessService {
             tXRequest.setReason(XapiReader.readXapi(e.toString(), apiResponse).getMessage());
             return BigDecimal.ZERO;
         } finally {
-            Logging.info("Processed Balance Enquiry " + tXRequest.getAccount());
+            Logging.info("Processed Balance Enquiry " + tXRequest.getAcctNo());
 
         }
     }
@@ -302,7 +307,7 @@ public class ChargeProcessService {
                 attempts++;
                 Logging.warn(String.format(
                         "Attempt %d failed for %s: %s",
-                        attempts, chargeData.getAccount(), e.getMessage()));
+                        attempts, chargeData.getAcctNo(), e.getMessage()));
 
                 if (attempts < MAX_RETRIES) {
                     try {
@@ -330,7 +335,7 @@ public class ChargeProcessService {
                 irequest.setBankChargePosted(false);
                 return true;
             }
-            irequest.setAccount(irequest.getChargeAcct());
+            irequest.setAcctNo(irequest.getChargeAcct());
             irequest.setContraAccount(irequest.getBankChargeGL());
             irequest.setTxnAmount(irequest.getBankCharge().add(irequest.getVendorCharge()));
             irequest.setTxnDesc(irequest.getChargeDesc());
@@ -355,7 +360,7 @@ public class ChargeProcessService {
                 irequest.setVendorChargePosted(false);
                 return true;
             }
-            irequest.setAccount(irequest.isBankChargePosted() ? irequest.getBankChargeGL() : irequest.getChargeAcct());
+            irequest.setAcctNo(irequest.isBankChargePosted() ? irequest.getBankChargeGL() : irequest.getChargeAcct());
             irequest.setContraAccount(irequest.getVendorChargeGL());
             irequest.setTxnAmount(irequest.getVendorCharge());
             irequest.setTxnDesc(irequest.getChargeDesc().concat(" ~ Vendor"));
@@ -383,7 +388,7 @@ public class ChargeProcessService {
                 irequest.setTaxChargePosted(false);
                 return true;
             }
-            irequest.setAccount(irequest.getChargeAcct());
+            irequest.setAcctNo(irequest.getChargeAcct());
             irequest.setContraAccount(irequest.getTaxChargeGL());
             irequest.setTxnAmount(irequest.getTaxCharge());
             irequest.setTxnDesc(irequest.getChargeDesc().concat(" ~ Excise duty"));
@@ -420,12 +425,12 @@ public class ChargeProcessService {
     public Object postGLToGLTransfer(AlertRequest tXRequest) {
 
         Logging.info("Processing GL2GL Transfer " + tXRequest.getTxnDesc() + " "
-                + tXRequest.getAccount() + " --> " + tXRequest.getContraAccount());
+                + tXRequest.getAcctNo() + " --> " + tXRequest.getContraAccount());
 
         try {
             GLTransferRequest glTransferRequest = new GLTransferRequest();
             glTransferRequest = (GLTransferRequest) getBaseRequest(glTransferRequest, tXRequest);
-            glTransferRequest.setFromGLAccountNumber(tXRequest.getAccount());
+            glTransferRequest.setFromGLAccountNumber(tXRequest.getAcctNo());
             glTransferRequest.setToGLAccountNumber(tXRequest.getContraAccount());
             glTransferRequest.setTransactionAmount(tXRequest.getTxnAmount());
             glTransferRequest.setTransactionCurrencyCode(tXRequest.getTxnCurrency());
@@ -441,7 +446,7 @@ public class ChargeProcessService {
 
         } finally {
             Logging.info("Processed GL2GL Transfer " + tXRequest.getTxnDesc() + " "
-                    + tXRequest.getAccount() + " --> " + tXRequest.getContraAccount());
+                    + tXRequest.getAcctNo() + " --> " + tXRequest.getContraAccount());
         }
 
     }
@@ -450,7 +455,7 @@ public class ChargeProcessService {
         try {
             XAPIBaseTxnRequestData requestData = new XAPIBaseTxnRequestData();
             requestData = (XAPIBaseTxnRequestData) getBaseRequest(requestData, tXRequest);
-            requestData.setAcctNo(tXRequest.getAccount());
+            requestData.setAcctNo(tXRequest.getAcctNo());
             requestData.setContraAcctNo(tXRequest.getContraAccount());
             requestData.setTxnDescription(tXRequest.getTxnDesc());
             requestData.setTxnAmount(tXRequest.getTxnAmount());
@@ -471,7 +476,7 @@ public class ChargeProcessService {
 
     private void updateChargeStatus(AlertRequest chargeData) {
         try {
-            alertsDao.updateSMSCount(chargeData.getAccount(), "Success", "C", chargeData.getChargeAmount(),
+            alertsDao.updateSMSCount(chargeData.getAcctNo(), "Success", "C", chargeData.getChargeAmount(),
                     chargeData.getSmsCount(), new Date(chargeData.getLogDate().getTime()));
         } catch (Exception ex) {
             Logging.info("Failed to update charge status");

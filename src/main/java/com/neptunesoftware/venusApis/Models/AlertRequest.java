@@ -11,7 +11,7 @@ import java.sql.Date;
 @SuppressWarnings("serial")
 public class AlertRequest implements Serializable {
 
-    private String account, contraAccount, txnDesc, txnReference, txnCurrency, channelCode, xapiCode, cardNumber,
+    private String acctNo, contraAccount, txnDesc, txnReference, txnCurrency, channelCode, xapiCode, cardNumber,
             chargeJournalId, bankChargeGL, taxChargeGL, vendorChargeGL, name, query, sprocedures, sender, chargeDesc,
             chargeAcct, reason, errorcode, glPrefixCd;
     private BigDecimal txnAmount, chargeAmount, bankCharge, taxCharge, vendorCharge;
@@ -20,15 +20,15 @@ public class AlertRequest implements Serializable {
     private int smsCount, smsAlertCrncyId;
     private Date logDate;
 
-    public AlertRequest(String account, String contraAccount, String txnDesc, String txnReference, String txnCurrency,
+    public AlertRequest(String acctNo, String contraAccount, String txnDesc, String txnReference, String txnCurrency,
                         String channelCode, String xapiCode, String cardNumber, String chargeJournalId, String bankChargeGL,
                         String taxChargeGL, String vendorChargeGL, String name, String query, String sprocedures, String sender,
                         String chargeDesc, String chargeAcct, String reason, BigDecimal txnAmount, BigDecimal chargeAmount,
                         BigDecimal bankCharge, BigDecimal taxCharge, BigDecimal vendorCharge, long channelId, long msgCount,
                         boolean vendorChargePosted, boolean bankChargePosted, boolean taxChargePosted, int smsCount
-                       , Date logDate, int smsAlertCrncyId) {
+                       , Date logDate, int smsAlertCrncyId, String glPrefixCd) {
         super();
-        this.account = account;
+        this.acctNo = acctNo;
         this.contraAccount = contraAccount;
         this.txnDesc = txnDesc;
         this.txnReference = txnReference;
@@ -68,12 +68,12 @@ public class AlertRequest implements Serializable {
         // TODO Auto-generated constructor stub
     }
 
-    public String getAccount() {
-        return account;
+    public String getAcctNo() {
+        return acctNo;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setAcctNo(String acctNo) {
+        this.acctNo = acctNo;
     }
 
     public String getContraAccount() {

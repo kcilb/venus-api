@@ -12,10 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.*;
 
 
@@ -164,7 +160,7 @@ public class AlertsDao {
             String sql = "INSERT INTO SMSBANK.FAILED_SPLIT VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, ?, ?, SYSDATE)";
 
             jdbcTemplate.update(sql,
-                    chargeData.getAccount(),
+                    chargeData.getAcctNo(),
                     chargeData.getBankCharge(),
                     chargeData.getVendorCharge(),
                     chargeData.getTaxCharge(),
