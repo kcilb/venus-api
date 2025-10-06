@@ -139,7 +139,6 @@ public class AlertsDao {
 
             jdbcTemplate.update(sql,
                     status,
-                    smsCount,
                     "C".equals(status) ? 0 : smsCount,
                     "C".equals(status) ? chargeAmount : BigDecimal.ZERO,
                     new java.sql.Date(new Date().getTime()),
@@ -175,7 +174,7 @@ public class AlertsDao {
                     chargeData.getChargeDesc(),
                     chargeData.getVendorCharge(),
                     new java.sql.Date(chargeData.getLogDate().getTime()),
-                    chargeData.getTxnCurrency(),
+                    chargeData.getCrncyCdIso(),
                     chargeData.getTxnReference()
             );
         } catch (Exception ex) {

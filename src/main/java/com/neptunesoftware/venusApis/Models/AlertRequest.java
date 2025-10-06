@@ -11,7 +11,7 @@ import java.sql.Date;
 @SuppressWarnings("serial")
 public class AlertRequest implements Serializable {
 
-    private String acctNo, contraAccount, txnDesc, txnReference, txnCurrency, channelCode, xapiCode, cardNumber,
+    private String acctNo, contraAccount, txnDesc, txnReference, crncyCdIso, channelCode, xapiCode, cardNumber,
             chargeJournalId, bankChargeGL, taxChargeGL, vendorChargeGL, name, query, sprocedures, sender, chargeDesc,
             chargeAcct, reason, errorcode, glPrefixCd;
     private BigDecimal txnAmount, chargeAmount, bankCharge, taxCharge, vendorCharge;
@@ -20,7 +20,7 @@ public class AlertRequest implements Serializable {
     private int smsCount, smsAlertCrncyId;
     private Date logDate;
 
-    public AlertRequest(String acctNo, String contraAccount, String txnDesc, String txnReference, String txnCurrency,
+    public AlertRequest(String acctNo, String contraAccount, String txnDesc, String txnReference, String crncyCdIso,
                         String channelCode, String xapiCode, String cardNumber, String chargeJournalId, String bankChargeGL,
                         String taxChargeGL, String vendorChargeGL, String name, String query, String sprocedures, String sender,
                         String chargeDesc, String chargeAcct, String reason, BigDecimal txnAmount, BigDecimal chargeAmount,
@@ -32,7 +32,7 @@ public class AlertRequest implements Serializable {
         this.contraAccount = contraAccount;
         this.txnDesc = txnDesc;
         this.txnReference = txnReference;
-        this.txnCurrency = txnCurrency;
+        this.crncyCdIso = crncyCdIso;
         this.channelCode = channelCode;
         this.xapiCode = xapiCode;
         this.cardNumber = cardNumber;
@@ -100,12 +100,12 @@ public class AlertRequest implements Serializable {
         this.txnReference = txnReference;
     }
 
-    public String getTxnCurrency() {
-        return txnCurrency;
+    public String getCrncyCdIso() {
+        return crncyCdIso;
     }
 
-    public void setTxnCurrency(String txnCurrency) {
-        this.txnCurrency = txnCurrency;
+    public void setCrncyCdIso(String crncyCdIso) {
+        this.crncyCdIso = crncyCdIso;
     }
 
     public String getChannelCode() {

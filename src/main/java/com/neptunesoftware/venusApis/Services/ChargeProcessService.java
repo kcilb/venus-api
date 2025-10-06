@@ -117,7 +117,7 @@ public class ChargeProcessService {
                 .build();
     }
 
-    private void processAllCharges(String resultSetView) throws SQLException, InterruptedException {
+    private void processAllCharges(String resultSetView) throws SQLException, InterruptedException, JsonProcessingException {
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
         CompletionService<Void> completionService = new ExecutorCompletionService<>(executor);
 
@@ -152,7 +152,7 @@ public class ChargeProcessService {
     }
 
 
-    private List<AlertRequest> fetchBatch(int pageNumber, String resultSetView) throws SQLException {
+    private List<AlertRequest> fetchBatch(int pageNumber, String resultSetView) throws SQLException, JsonProcessingException {
 
         List<AlertRequest> batch = new ArrayList<>();
 
@@ -162,12 +162,26 @@ public class ChargeProcessService {
         if (alertRequests.isEmpty())
             return Collections.emptyList();
 
+
+
         for (AlertRequest alertRequest : alertRequests) {
+            Logging.info("SMS_CURRENCY_ID");
+            Logging.info(String.valueOf(alertRequest.getSmsAlertCrncyId()));
+
+            Logging.info("SYSTEM_ID");
+            Logging.info(String.valueOf(currencyId));
+
             // filter all charges attached to the currency
             List<AlertCharge> filteredCharges = sms_charges.stream()
                     .filter(charge -> charge.getSmsAlertCrncyId() == currencyId) // Filter by current currency
                     .collect(Collectors.toList());
+
+            Logging.info(">>>>>>>>>>>>>>> FILTERED_CHARGES <<<<<<<<<<<<<<<<<<<<<");
+            Logging.info(new ObjectMapper().writeValueAsString(filteredCharges));
             AlertCharge charge = computeCharge(alertRequest.getSmsCount(),filteredCharges);
+
+            Logging.info(">>>>>>>>>>>>>>>>>> COMPUTED_CHARGES <<<<<<<<<<<<<<<<<<<<");
+            Logging.info(new ObjectMapper().writeValueAsString(charge));
             batch.add(buildAlertRequest(alertRequest, charge));
         }
         return batch;
@@ -183,7 +197,7 @@ public class ChargeProcessService {
 
     private AlertRequest buildAlertRequest(AlertRequest alertRequest, AlertCharge charge) throws SQLException {
         return new AlertRequest(alertRequest.getAcctNo(), null, null,
-                String.valueOf(System.currentTimeMillis()), alertRequest.getTxnCurrency(), "SMS", null,
+                String.valueOf(System.currentTimeMillis()), alertRequest.getCrncyCdIso(), "SMS", null,
                 alertRequest.getAcctNo(), null,
                 unmaskGLAccount(alertRequest.getGlPrefixCd(), appProps.bankChargeGl),
                 unmaskGLAccount(alertRequest.getGlPrefixCd(), appProps.taxChargeGl),
@@ -202,6 +216,8 @@ public class ChargeProcessService {
         } catch (Exception e) {
             Logging.info("Error updating insufficient balance account SMS count");
             Logging.info(e.getMessage(), e);
+            alertsDao.updateSMSCount(chargeData.getAcctNo(), e.getMessage(),
+                    "N", null, chargeData.getSmsCount(), chargeData.getLogDate());
         }
     }
 
@@ -211,11 +227,8 @@ public class ChargeProcessService {
             Logging.info(">>>>>>>>>>>>>>>>> ACCOUNT_CHARGE_PROCESSING <<<<<<<<<<<<<<<<<<<<<<<");
             Logging
                     .info("Balance Check  for " + chargeData.getAcctNo());
-            Logging.info(new ObjectMapper().writeValueAsString(chargeData));
             BigDecimal balance = queryDepositAccountBalance(chargeData);
 
-            Logging.info(">>>>>>>>>>>>>>>>> ACCOUNT_CHARGE_PROCESSING_RESPONSE <<<<<<<<<<<<<<<<<<<<<<<");
-            Logging.info(new ObjectMapper().writeValueAsString(balance));
 
             if (balance == null) {
                 syserr.incrementAndGet();
@@ -228,21 +241,30 @@ public class ChargeProcessService {
                     .info("Handling Charge Posting for " + chargeData.getAcctNo() + " with bal " + balance);
 
             if (balance.compareTo(chargeData.getChargeAmount()) <= 0) {
+                Logging.info(">>>>>>>>>>>>>>>>> INSUFFICIENT_ACCOUNT_BALANCE <<<<<<<<<<<<<<<<<<<<<<<");
+                Logging.info("Insufficient Acct Balance for " + chargeData.getAcctNo()+" with bal " + balance);
+
                 handleInsufficientFunds(chargeData);
                 lowFunds.incrementAndGet();
                 processedRecords.incrementAndGet();
                 return;
             }
 
+            Logging.info(">>>>>>>>>>>>>>>>>>> ATTEMPT_TO_POST <<<<<<<<<<<<<<<<<<<<<<<<");
+            Logging.info(new ObjectMapper().writeValueAsString(chargeData));
             // consider grouping total charges by currency
             boolean success = attemptChargePostingWithRetry(chargeData);
             if (success) {
+                Logging.info(">>>>>>>>>>>>>>>>> CHARGE_POSTED <<<<<<<<<<<<<<<<<<<<<<<");
+                Logging.info("Charge Posted for " + chargeData.getAcctNo()+" with bal " + balance);
                 posted.incrementAndGet();
                 totalCharge.updateAndGet(current ->
                         current.add(chargeData.getBankCharge())
                                 .add(chargeData.getTaxCharge())
                                 .add(chargeData.getVendorCharge()));
             } else {
+                Logging.info(">>>>>>>>>>>>>>>>> CHARGE_POSTING_FAILED <<<<<<<<<<<<<<<<<<<<<<<");
+                Logging.info("Charge Posting Failed for " + chargeData.getAcctNo()+" with bal " + balance);
                 failed.incrementAndGet();
             }
             processedRecords.incrementAndGet();
@@ -314,8 +336,10 @@ public class ChargeProcessService {
         return false;
     }
 
-    private boolean postCharge(String benefactor, AlertRequest irequest) {
+    private boolean postCharge(String benefactor, AlertRequest irequest) throws JsonProcessingException {
 
+        Logging.info("================CHARGE_POSTING");
+        Logging.info(new ObjectMapper().writeValueAsString(irequest));
         if ("Bank".equalsIgnoreCase(benefactor)) {
             if (irequest.getBankCharge().compareTo(BigDecimal.ZERO) <= 0) {
                 Logging.info("Skipping, no bank charge amount was configured");
@@ -327,11 +351,15 @@ public class ChargeProcessService {
                 irequest.setBankChargePosted(false);
                 return true;
             }
+            Logging.info("================DP2GL_REQUEST");
             irequest.setAcctNo(irequest.getChargeAcct());
             irequest.setContraAccount(irequest.getBankChargeGL());
             irequest.setTxnAmount(irequest.getBankCharge().add(irequest.getVendorCharge()));
             irequest.setTxnDesc(irequest.getChargeDesc());
+            Logging.info(new ObjectMapper().writeValueAsString(irequest));
             Object response = postDepositToGLTransfer(irequest);
+            Logging.info("================DP2GL_RESPONSE");
+            Logging.info(new ObjectMapper().writeValueAsString(response));
             if (response instanceof TxnResponseOutputData) {
                 irequest.setBankChargePosted("00".equals(((TxnResponseOutputData) response).getResponseCode()));
             } else if (response instanceof XAPIException) {
@@ -425,7 +453,7 @@ public class ChargeProcessService {
             glTransferRequest.setFromGLAccountNumber(tXRequest.getAcctNo());
             glTransferRequest.setToGLAccountNumber(tXRequest.getContraAccount());
             glTransferRequest.setTransactionAmount(tXRequest.getTxnAmount());
-            glTransferRequest.setTransactionCurrencyCode(tXRequest.getTxnCurrency());
+            glTransferRequest.setTransactionCurrencyCode(tXRequest.getCrncyCdIso());
             glTransferRequest.setTxnDescription(tXRequest.getTxnDesc());
             glTransferRequest.setReference(tXRequest.getTxnReference());
             return transactionsEndPoint.postGLtoGLXfer(glTransferRequest);
@@ -445,6 +473,7 @@ public class ChargeProcessService {
 
     public Object postDepositToGLTransfer(AlertRequest tXRequest) {
         try {
+            Logging.info("==============CALL_CORE");
             XAPIBaseTxnRequestData requestData = new XAPIBaseTxnRequestData();
             requestData = (XAPIBaseTxnRequestData) getBaseRequest(requestData, tXRequest);
             requestData.setAcctNo(tXRequest.getAcctNo());
@@ -454,10 +483,14 @@ public class ChargeProcessService {
             requestData.setTransmissionTime(System.currentTimeMillis());
             requestData.setReference(tXRequest.getTxnReference());
             requestData.setTxnReference(tXRequest.getTxnReference());
-            requestData.setTxnCurrencyCode(tXRequest.getTxnCurrency());
-            return txnWebEndPoint.postDepositToGLAccountTransfer(requestData);
+            requestData.setTxnCurrencyCode(tXRequest.getCrncyCdIso());
+            Logging.info("====================CALL_REQUEST");
+            Logging.info(new ObjectMapper().writeValueAsString(requestData));
+            Object object = txnWebEndPoint.postDepositToGLAccountTransfer(requestData);
+            return object;
         } catch (Exception e) {
-            Logging.error(e);
+            Logging.info("EXCEPTION_OCCURED_WHILE_POSTING");
+            Logging.info(e.getMessage(),e);
             ApiResponse<String> apiResponse = new ApiResponse<>();
             tXRequest.setErrorcode(XapiReader.readXapi(e.toString(), apiResponse).getCode());
             tXRequest.setReason(XapiReader.readXapi(e.toString(), apiResponse).getMessage());
