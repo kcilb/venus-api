@@ -41,8 +41,6 @@ public class AlertsDao {
                             new BeanPropertyRowMapper<>(
                                     SMS.class), lastMessageId, fetchLimit);
             ObjectMapper mapper = new ObjectMapper();
-            Logging.info("MESSAGES_LIST");
-            Logging.info(mapper.writeValueAsString(messageList));
             if (!messageList.isEmpty())
                 tranList = new TrxnSmsList("0", "Success", messageList);
             else
@@ -116,7 +114,7 @@ public class AlertsDao {
             }
 
             if (updateCount >= 0) {
-                return new Update("00", "Success", null);
+                return new Update("0", "Success", null);
             }
             return new Update("92", "No updates were performed", null);
         } catch (Exception e) {

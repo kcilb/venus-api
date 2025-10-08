@@ -225,8 +225,7 @@ public class ChargeProcessService {
         try {
 
             Logging.info(">>>>>>>>>>>>>>>>> ACCOUNT_CHARGE_PROCESSING <<<<<<<<<<<<<<<<<<<<<<<");
-            Logging
-                    .info("Balance Check  for " + chargeData.getAcctNo());
+            Logging.info("Balance Check  for " + chargeData.getAcctNo());
             BigDecimal balance = queryDepositAccountBalance(chargeData);
 
 
@@ -237,8 +236,7 @@ public class ChargeProcessService {
             }
 
             Logging.info(">>>>>>>>>>>>>>>>> ACCOUNT_CHARGE_POSTING <<<<<<<<<<<<<<<<<<<<<<<");
-            Logging
-                    .info("Handling Charge Posting for " + chargeData.getAcctNo() + " with bal " + balance);
+            Logging.info("Handling Charge Posting for " + chargeData.getAcctNo() + " with bal " + balance);
 
             if (balance.compareTo(chargeData.getChargeAmount()) <= 0) {
                 Logging.info(">>>>>>>>>>>>>>>>> INSUFFICIENT_ACCOUNT_BALANCE <<<<<<<<<<<<<<<<<<<<<<<");
@@ -251,7 +249,6 @@ public class ChargeProcessService {
             }
 
             Logging.info(">>>>>>>>>>>>>>>>>>> ATTEMPT_TO_POST <<<<<<<<<<<<<<<<<<<<<<<<");
-            Logging.info(new ObjectMapper().writeValueAsString(chargeData));
             // consider grouping total charges by currency
             boolean success = attemptChargePostingWithRetry(chargeData);
             if (success) {
@@ -271,8 +268,6 @@ public class ChargeProcessService {
         } catch (SQLException e) {
             Logging.error("Processing failed for " + chargeData.getAcctNo(), e);
             failed.incrementAndGet();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -489,7 +484,7 @@ public class ChargeProcessService {
             Object object = txnWebEndPoint.postDepositToGLAccountTransfer(requestData);
             return object;
         } catch (Exception e) {
-            Logging.info("EXCEPTION_OCCURED_WHILE_POSTING");
+            Logging.info("EXCEPTION_OCCURRED_WHILE_POSTING");
             Logging.info(e.getMessage(),e);
             ApiResponse<String> apiResponse = new ApiResponse<>();
             tXRequest.setErrorcode(XapiReader.readXapi(e.toString(), apiResponse).getCode());

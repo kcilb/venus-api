@@ -8,9 +8,11 @@ import com.neptunesoftware.venusApis.Models.ChargeTiers;
 import com.neptunesoftware.venusApis.Models.SmsAlertCurrency;
 import com.neptunesoftware.venusApis.Util.Logging;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
@@ -51,10 +53,37 @@ public class AdminDao {
     }
 
     public void executeCallableService(String task) {
+        if (task == null || task.trim().isEmpty()) {
+            Logging.error("Task name cannot be null or empty");
+            return;
+        }
+
+        String fullProcedureName = "SMSBANK." + task;
+
         try {
-            jdbcTemplate.execute("{call " + task + "}");
+            Logging.info("Attempting to execute procedure: " + fullProcedureName);
+            jdbcTemplate.execute("{call " + fullProcedureName + "}");
+
+            Logging.info("Successfully executed procedure: " + fullProcedureName);
+
+        } catch (BadSqlGrammarException e) {
+            Logging.error("SQL grammar error for procedure: " + fullProcedureName, e);
+            attemptRecompileProcedure(task);
         } catch (Exception e) {
-            Logging.error(e.getMessage(), e);
+            Logging.error("Unexpected error executing procedure: " + fullProcedureName, e);
+        }
+    }
+
+    private void attemptRecompileProcedure(String procedureName) {
+        try {
+            Logging.info("Attempting to recompile procedure: " + procedureName);
+            jdbcTemplate.execute("ALTER PROCEDURE SMSBANK." + procedureName + " COMPILE");
+            Logging.info("Successfully recompiled procedure: " + procedureName);
+            jdbcTemplate.execute("{call SMSBANK." + procedureName + "}");
+            Logging.info("Successfully executed after recompilation: " + procedureName);
+
+        } catch (Exception e) {
+            Logging.error("Failed to recompile or execute procedure: " + procedureName, e);
         }
     }
 
