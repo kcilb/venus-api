@@ -608,7 +608,8 @@ public class ChargeProcessService {
         long totalTime = System.currentTimeMillis() - startTime;
         Logging.info("Total Time taken in milliseconds: " + totalTime);
 
-        String totalTimeTaken = formatSecondsToTime(totalTime);
+        long totalSeconds = totalTime / 1000;
+        String totalTimeTaken = formatSecondsToTime(totalSeconds);
 
         // Log final results to database
         try {
