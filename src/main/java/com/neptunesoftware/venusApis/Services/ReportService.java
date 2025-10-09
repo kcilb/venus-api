@@ -24,10 +24,10 @@ public class ReportService {
     private static final BaseColor HEADER_BG_COLOR = new BaseColor(0, 51, 102);
 
     public static String generateChargeReport(boolean isAutoRecoveryInitiated, int posted
-            , int failed, int lowFunds, int syserr, int processedRecords, int total) {
+            , int failed, int lowFunds, int syserr, int processedRecords, int total, String totalTimeTaken) {
 
         String outcome = "The Monthly " + (isAutoRecoveryInitiated ? "auto recovery" : "") +
-                " SMS Charge routine has completed.\r\n" + posted + " Accounts charged successfully\r\n" +
+                " SMS Charge routine has completed in "+totalTimeTaken+".\r\n" + posted + " Accounts charged successfully\r\n" +
                 failed + " Accounts failed from system error\r\n" + lowFunds +
                 " Failed as a result of insufficient funds\r\n" + syserr +
                 " Failed as a result of a failure to retrieve account balance on account\r\n" +

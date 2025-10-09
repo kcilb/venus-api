@@ -39,6 +39,9 @@ import java.nio.file.Files;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -93,10 +96,10 @@ public class ChargeProcessService {
             // Load charge configurations (thread-safe)
             loadCharges();
 
-            // Get total count
-            getTotalRecords(resultSetView);
-
+            // Get total count for charge currency
             currencyId = currency;
+            getTotalRecords(resultSetView, currencyId);
+
             currencyName = cacheService.getCurrencyNameById(currencyId);
             // Process all charges
             processAllCharges(resultSetView);
@@ -163,7 +166,6 @@ public class ChargeProcessService {
             return Collections.emptyList();
 
 
-
         for (AlertRequest alertRequest : alertRequests) {
             Logging.info("SMS_CURRENCY_ID");
             Logging.info(String.valueOf(alertRequest.getSmsAlertCrncyId()));
@@ -178,7 +180,7 @@ public class ChargeProcessService {
 
             Logging.info(">>>>>>>>>>>>>>> FILTERED_CHARGES <<<<<<<<<<<<<<<<<<<<<");
             Logging.info(new ObjectMapper().writeValueAsString(filteredCharges));
-            AlertCharge charge = computeCharge(alertRequest.getSmsCount(),filteredCharges);
+            AlertCharge charge = computeCharge(alertRequest.getSmsCount(), filteredCharges);
 
             Logging.info(">>>>>>>>>>>>>>>>>> COMPUTED_CHARGES <<<<<<<<<<<<<<<<<<<<");
             Logging.info(new ObjectMapper().writeValueAsString(charge));
@@ -240,7 +242,7 @@ public class ChargeProcessService {
 
             if (balance.compareTo(chargeData.getChargeAmount()) <= 0) {
                 Logging.info(">>>>>>>>>>>>>>>>> INSUFFICIENT_ACCOUNT_BALANCE <<<<<<<<<<<<<<<<<<<<<<<");
-                Logging.info("Insufficient Acct Balance for " + chargeData.getAcctNo()+" with bal " + balance);
+                Logging.info("Insufficient Acct Balance for " + chargeData.getAcctNo() + " with bal " + balance);
 
                 handleInsufficientFunds(chargeData);
                 lowFunds.incrementAndGet();
@@ -253,7 +255,7 @@ public class ChargeProcessService {
             boolean success = attemptChargePostingWithRetry(chargeData);
             if (success) {
                 Logging.info(">>>>>>>>>>>>>>>>> CHARGE_POSTED <<<<<<<<<<<<<<<<<<<<<<<");
-                Logging.info("Charge Posted for " + chargeData.getAcctNo()+" with bal " + balance);
+                Logging.info("Charge Posted for " + chargeData.getAcctNo() + " with bal " + balance);
                 posted.incrementAndGet();
                 totalCharge.updateAndGet(current ->
                         current.add(chargeData.getBankCharge())
@@ -261,7 +263,7 @@ public class ChargeProcessService {
                                 .add(chargeData.getVendorCharge()));
             } else {
                 Logging.info(">>>>>>>>>>>>>>>>> CHARGE_POSTING_FAILED <<<<<<<<<<<<<<<<<<<<<<<");
-                Logging.info("Charge Posting Failed for " + chargeData.getAcctNo()+" with bal " + balance);
+                Logging.info("Charge Posting Failed for " + chargeData.getAcctNo() + " with bal " + balance);
                 failed.incrementAndGet();
             }
             processedRecords.incrementAndGet();
@@ -485,7 +487,7 @@ public class ChargeProcessService {
             return object;
         } catch (Exception e) {
             Logging.info("EXCEPTION_OCCURRED_WHILE_POSTING");
-            Logging.info(e.getMessage(),e);
+            Logging.info(e.getMessage(), e);
             ApiResponse<String> apiResponse = new ApiResponse<>();
             tXRequest.setErrorcode(XapiReader.readXapi(e.toString(), apiResponse).getCode());
             tXRequest.setReason(XapiReader.readXapi(e.toString(), apiResponse).getMessage());
@@ -527,8 +529,8 @@ public class ChargeProcessService {
         sms_charges = cacheService.getCachedItem().chargesList;
     }
 
-    private void getTotalRecords(String resultSetView) {
-        total = alertsDao.getTotalRecords(resultSetView);
+    private void getTotalRecords(String resultSetView, Integer currencyId) {
+        total = alertsDao.getTotalRecords(resultSetView, currencyId);
     }
 
     public static Map<String, String> endpointFunctions = new HashMap<String, String>();
@@ -594,9 +596,19 @@ public class ChargeProcessService {
         return xapiCodes.getProperty(errorCode, "Undefined error occured");
     }
 
+    public static String formatSecondsToTime(long totalSeconds) {
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
     private Map<String, String> logResults(long startTime, boolean isAutoRecoveryInitiated) {
         long totalTime = System.currentTimeMillis() - startTime;
         Logging.info("Total Time taken in milliseconds: " + totalTime);
+
+        String totalTimeTaken = formatSecondsToTime(totalTime);
 
         // Log final results to database
         try {
@@ -606,7 +618,7 @@ public class ChargeProcessService {
         }
 
         String filePath = ReportService.generateChargeReport(isAutoRecoveryInitiated, posted.get(), failed.get()
-                , lowFunds.get(), syserr.get(), processedRecords.get(), total);
+                , lowFunds.get(), syserr.get(), processedRecords.get(), total, totalTimeTaken);
 
         File file = new File(filePath);
         if (!file.exists()) {

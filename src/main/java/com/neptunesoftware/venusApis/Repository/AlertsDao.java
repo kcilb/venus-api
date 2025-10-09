@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -57,11 +59,12 @@ public class AlertsDao {
         return tranList;
     }
 
-    public int getTotalRecords(String resultSetView) {
+    public int getTotalRecords(String resultSetView, Integer currencyId) {
         try {
             return jdbcTemplate.queryForObject(
-                    "SELECT COUNT(*) FROM " + resultSetView,
-                    Integer.class
+                    "SELECT COUNT(*) FROM " + resultSetView + " WHERE SMS_ALERT_CRNCY_ID = ?",
+                    Integer.class,
+                    currencyId
             );
         } catch (EmptyResultDataAccessException e) {
             throw e;
@@ -110,7 +113,10 @@ public class AlertsDao {
                         .get().get("sms_count"))) + msgCount;
                 updateCount = jdbcTemplate.update(updateSql, totalSMS, totalSMS, "N", acctNo);
             } else {
-                updateCount = jdbcTemplate.update(insertSql, msgCount, msgCount, "N", acctNo, processDt);
+                Logging.info("PROCESSING_DATE:"+processDt);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate coreDate = LocalDate.parse(processDt, formatter);
+                updateCount = jdbcTemplate.update(insertSql, msgCount, msgCount, "N", acctNo, coreDate);
             }
 
             if (updateCount >= 0) {
