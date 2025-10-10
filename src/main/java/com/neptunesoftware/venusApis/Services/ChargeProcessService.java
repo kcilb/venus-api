@@ -63,11 +63,11 @@ public class ChargeProcessService {
     private final SimpleDateFormat format = new SimpleDateFormat("MMM yyyy");
 
     // Thread-safe counters
-    private final AtomicInteger processedRecords = new AtomicInteger(0);
-    private final AtomicInteger posted = new AtomicInteger(0);
-    private final AtomicInteger failed = new AtomicInteger(0);
-    private final AtomicInteger lowFunds = new AtomicInteger(0);
-    private final AtomicInteger syserr = new AtomicInteger(0);
+    private AtomicInteger processedRecords = new AtomicInteger(0);
+    private AtomicInteger posted = new AtomicInteger(0);
+    private AtomicInteger failed = new AtomicInteger(0);
+    private AtomicInteger lowFunds = new AtomicInteger(0);
+    private AtomicInteger syserr = new AtomicInteger(0);
     private final AtomicReference<BigDecimal> totalCharge = new AtomicReference<>(BigDecimal.ZERO);
     private static List<AlertCharge> sms_charges = Collections.emptyList();
     private int total;
@@ -89,6 +89,11 @@ public class ChargeProcessService {
         Map<String, String> report;
         Logging.info("Method Entry: ChargePosting.run");
         long startTime = System.currentTimeMillis();
+        posted = new AtomicInteger(0);
+        failed = new AtomicInteger(0);
+        lowFunds = new AtomicInteger(0);
+        syserr = new AtomicInteger(0);
+        processedRecords = new AtomicInteger(0);
         try {
             // Initialize core connection
             loadCoreConnection();
